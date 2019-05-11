@@ -1,0 +1,118 @@
+﻿---
+title: ThreadPool 2
+categories :
+- 技术
+tags :
+- Java
+---
+
+### 1.创建线程池
+```
+ /**
+         * cachedThreadPool
+         */
+        ExecutorService cachedThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60,
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+                new NamedThreadFactory("CachedThread"), new ThreadPoolExecutor.AbortPolicy());
+                
+        int cpuNum = Runtime.getRuntime().availableProcessors();
+
+        /**
+         * fixedThreadPool
+         */
+        ExecutorService fixedThreadPool = new ThreadPoolExecutor(cpuNum + 1, cpuNum + 1, 0,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
+                new NamedThreadFactory("FixedThread"), new ThreadPoolExecutor.AbortPolicy());
+
+        /**
+         * singleThreadPool
+         */
+        ExecutorService singleThreadPool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.NANOSECONDS,
+                new LinkedBlockingQueue<>(), new NamedThreadFactory("SingleThread"),
+                new ThreadPoolExecutor.AbortPolicy());
+
+        /**
+         * scheduledThreadPool
+         */
+        ExecutorService scheduledThreadPool = new ThreadPoolExecutor(cpuNum + 1, Integer.MAX_VALUE,
+                0, TimeUnit.NANOSECONDS, new DelayQueue(),
+                new NamedThreadFactory("ScheduledThread"), new ThreadPoolExecutor.AbortPolicy());
+
+        ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(2,
+                new NamedThreadFactory("schedule"), new ThreadPoolExecutor.AbortPolicy());
+```
+#### 注意
+`ExecutorService scheduledThreadPool`这种方式创建的线程池时没有`scheduledThreadPool`和`singleThreadPool`方法的.
+
+#### scheduleAtFixedRate和scheduleWithFixedDelay区别
+```
+ /**
+         * scheduleAtFixedRate 从上一次任务开始执行时 根据period计算下次开始执行时间
+         */
+         scheduledExecutorService.scheduleAtFixedRate(task, 3, 4, TimeUnit.SECONDS);
+        /**
+         * scheduleWithFixedDelay 从上一次任务结束的时候 根据delay计算下次任务开始的执行时间
+         */
+        scheduledExecutorService.scheduleWithFixedDelay(task, 3, 4, TimeUnit.SECONDS);
+```
+#### 异常处理
+```
+static class Task implements Runnable {
+
+        @Override
+        public void run() {
+            Thread.currentThread()
+                    .setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+                        @Override
+                        public void uncaughtException(Thread t, Throwable e) {
+                            System.out.println("exception");
+                        }
+                    });
+
+            System.out.println("---");
+            System.out.println(1 / 0);
+            System.out.println(Thread.currentThread().getName());
+
+        }
+    }
+```
+在创建线程任务时,最好在线程逻辑里就将异常捕获并处理.
+`在多线程环境中，线程抛出的异常是不能用try….catch捕获的，这样就有可能导致一些问题的出现，比如异常的时候无法回收一些系统资源，或者没有关闭当前的连接等等。`
+```
+ try {
+            //singleThreadPool.submit(task);
+            task.run();
+        } catch (Exception e) {
+            System.out.println(11);
+        }
+
+    }
+
+    static class Task implements Runnable {
+
+        @Override
+        public void run() {
+            
+
+            System.out.println("---");
+            System.out.println(1 / 0);
+            System.out.println(Thread.currentThread().getName());
+
+        }
+    }
+```
+这种方式还是会造成线程因为异常而终止.
+##### submit 和 execute 
+```
+singleThreadPool.submit(task);
+try {
+            singleThreadPool.submit(task);
+
+        } catch (Exception e) {
+            System.out.println(11);
+        }
+```
+submit无法捕获异常
+而execute方法可以捕获异常
+
