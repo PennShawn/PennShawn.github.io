@@ -9,7 +9,7 @@ tags :
 
 AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个session过来,
 ```
-/**
+    /**
      * Starts the inner Processor, asking the executor to pick a thread in its
      * pool. The Runnable will be renamed
      */
@@ -29,6 +29,7 @@ AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个sessi
         wakeup();
     }
 ```
+
 Processer就会执行循环,循环里面有个方法`handleNewSessions() `,一直从newSessions这个Queue<S>中取poll()出session,然后addNow(session)
 ```
  /**
