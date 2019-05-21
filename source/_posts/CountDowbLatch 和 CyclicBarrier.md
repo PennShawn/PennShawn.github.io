@@ -5,6 +5,7 @@ categories :
 tags :
 - Java
 ---
+
 ### 1.CountDownLatch
 `CountDownLatch latch = new CountDownLatch(7);`
 CountDownLatch可以用来计数,之前多线程读取日志数据时,在每个线程里`  latch.countDown();`
