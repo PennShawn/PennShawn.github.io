@@ -50,6 +50,7 @@ public class AbnormalResult {
 	}
 }
 ```
+
 输出:
 ```
 list.contains(a)->true
