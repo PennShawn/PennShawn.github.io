@@ -4,7 +4,7 @@ categories:
 - 技术
 tags:
 - Java
-- Efftive Java
+- Effective Java
 ---
 
 The class must document its `self-use` of overrideable methods.

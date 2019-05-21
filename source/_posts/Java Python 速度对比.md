@@ -4,6 +4,7 @@ categories :
 - 技术
 tags :
 - Java
+- python
 ---
 
 ### 1.循环

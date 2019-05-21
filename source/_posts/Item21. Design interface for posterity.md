@@ -5,7 +5,7 @@ categories:
 - 技术
 tags:
 - Java
-- Efftive Java
+- Effective Java
 
 ---
 
