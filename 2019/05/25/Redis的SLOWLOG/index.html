@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="python,jinja,">
+  <meta name="keywords" content="Redis,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json meta.yaml配置文件内容如下: 123456789101112secs: - id: 1   user: user1   pwd: pwd1   info:       gender: male - id: 2   user: user2   pwd: pwd2   info:       gender: fem">
-<meta name="keywords" content="python,jinja">
+<meta name="description" content="Slow log是Redis用来记录查询执行时间的日志系统.它保存在内存里面,读写速度非常快,不必担心因为开始slow log而损害Redis的速度. 设置SLOWLOGSlow log的行为有两个配置参数指定,可以通过改写redis.conf或者用CONFIG GET和CONFIG SET命令对它们动态的进行修改.第一个选项是slowlog-log-slower-than,它决定要对执行时间大于">
+<meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jinja 配置文件渲染模板">
-<meta property="og:url" content="http://yoursite.com/2019/05/21/jinja配置文件渲染模板/index.html">
+<meta property="og:title" content="Redis的SLOWLOG">
+<meta property="og:url" content="http://yoursite.com/2019/05/25/Redis的SLOWLOG/index.html">
 <meta property="og:site_name" content="Penn">
-<meta property="og:description" content="通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json meta.yaml配置文件内容如下: 123456789101112secs: - id: 1   user: user1   pwd: pwd1   info:       gender: male - id: 2   user: user2   pwd: pwd2   info:       gender: fem">
+<meta property="og:description" content="Slow log是Redis用来记录查询执行时间的日志系统.它保存在内存里面,读写速度非常快,不必担心因为开始slow log而损害Redis的速度. 设置SLOWLOGSlow log的行为有两个配置参数指定,可以通过改写redis.conf或者用CONFIG GET和CONFIG SET命令对它们动态的进行修改.第一个选项是slowlog-log-slower-than,它决定要对执行时间大于">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-21T09:12:54.910Z">
+<meta property="og:updated_time" content="2019-05-25T11:05:46.749Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jinja 配置文件渲染模板">
-<meta name="twitter:description" content="通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json meta.yaml配置文件内容如下: 123456789101112secs: - id: 1   user: user1   pwd: pwd1   info:       gender: male - id: 2   user: user2   pwd: pwd2   info:       gender: fem">
+<meta name="twitter:title" content="Redis的SLOWLOG">
+<meta name="twitter:description" content="Slow log是Redis用来记录查询执行时间的日志系统.它保存在内存里面,读写速度非常快,不必担心因为开始slow log而损害Redis的速度. 设置SLOWLOGSlow log的行为有两个配置参数指定,可以通过改写redis.conf或者用CONFIG GET和CONFIG SET命令对它们动态的进行修改.第一个选项是slowlog-log-slower-than,它决定要对执行时间大于">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/05/21/jinja配置文件渲染模板/">
+  <link rel="canonical" href="http://yoursite.com/2019/05/25/Redis的SLOWLOG/">
 
 
 
 
 
-  <title>jinja 配置文件渲染模板 | Penn</title>
+  <title>Redis的SLOWLOG | Penn</title>
   
 
 
@@ -293,7 +293,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/21/jinja配置文件渲染模板/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/25/Redis的SLOWLOG/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Shen">
@@ -310,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">jinja 配置文件渲染模板</h1>
+          <h1 class="post-title" itemprop="name headline">Redis的SLOWLOG</h1>
         
 
         <div class="post-meta">
@@ -322,8 +322,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-21T17:12:54+08:00">
-                2019-05-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-25T19:05:46+08:00">
+                2019-05-25
               </time>
             
 
@@ -362,7 +362,7 @@
 
           
           
-             <span id="/2019/05/21/jinja配置文件渲染模板/" class="leancloud_visitors" data-flag-title="jinja 配置文件渲染模板">
+             <span id="/2019/05/25/Redis的SLOWLOG/" class="leancloud_visitors" data-flag-title="Redis的SLOWLOG">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -393,20 +393,13 @@
       
 
       
-        <h5 id="通过meta-yaml里的配置文件-渲染模板文件gs-tpl生成gs-json"><a href="#通过meta-yaml里的配置文件-渲染模板文件gs-tpl生成gs-json" class="headerlink" title="通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json"></a>通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json</h5><ul>
-<li><p>meta.yaml配置文件内容如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">secs:</span><br><span class="line"> - id: 1</span><br><span class="line">   user: user1</span><br><span class="line">   pwd: pwd1</span><br><span class="line">   info:</span><br><span class="line">       gender: male</span><br><span class="line"></span><br><span class="line"> - id: 2</span><br><span class="line">   user: user2</span><br><span class="line">   pwd: pwd2</span><br><span class="line">   info:</span><br><span class="line">       gender: female</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>gs.tpl模板文件内容:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#123;%-  for sec in cfg.secs    %&#125;</span><br><span class="line">    &quot;&#123;&#123;sec.id&#125;&#125;&quot;:&#123;</span><br><span class="line">        &quot;user&quot;:&quot;&#123;&#123;sec.user&#125;&#125;&quot;,</span><br><span class="line">        &quot;pwd&quot;:&quot;&#123;&#123;sec.pwd&#125;&#125;&quot;,</span><br><span class="line">        &quot;info&quot;:&quot;&#123;&#123;sec.info&#125;&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    &#123;%- endfor %&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>最终生成的gs.json文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;1&quot;:&#123;</span><br><span class="line">        &quot;user&quot;:&quot;user1&quot;,</span><br><span class="line">        &quot;pwd&quot;:&quot;pwd1&quot;,</span><br><span class="line">        &quot;info&quot;:&quot;&#123;&apos;gender&apos;: &apos;male&apos;&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    &quot;2&quot;:&#123;</span><br><span class="line">        &quot;user&quot;:&quot;user2&quot;,</span><br><span class="line">        &quot;pwd&quot;:&quot;pwd2&quot;,</span><br><span class="line">        &quot;info&quot;:&quot;&#123;&apos;gender&apos;: &apos;female&apos;&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>python代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line">#. -*- coding: UTF-8 -*-</span><br><span class="line">#读取meta.yaml  并且渲染gs.tpl</span><br><span class="line"></span><br><span class="line">import ConfigParser</span><br><span class="line">import os</span><br><span class="line">import yaml</span><br><span class="line">from jinja2 import Template</span><br><span class="line">from jinja2 import Environment</span><br><span class="line">from jinja2 import FileSystemLoader</span><br><span class="line"></span><br><span class="line">#os.chdir() 方法用于改变当前工作目录到指定的路径。</span><br><span class="line">#os.getcwd()  获取文件路径</span><br><span class="line">#对于本例,文件都在同一文件夹下,下面这行代码其实没意义</span><br><span class="line">os.chdir(os.getcwd())</span><br><span class="line"></span><br><span class="line">yamlpath = &apos;meta.yaml&apos;</span><br><span class="line">config = yaml.load(file(yamlpath,&apos;r&apos;))</span><br><span class="line"></span><br><span class="line">env = Environment( loader = FileSystemLoader(os.getcwd()))</span><br><span class="line">template = env.get_template(&apos;gs.tpl&apos;)</span><br><span class="line">result =   template.render(cfg=config)</span><br><span class="line"></span><br><span class="line">fp = open(&apos;gs.json&apos;,&apos;w&apos;)</span><br><span class="line">fp.write(result)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+        <p><code>Slow log</code>是Redis用来记录查询执行时间的日志系统.它保存在内存里面,读写速度非常快,不必担心因为开始<code>slow log</code>而损害Redis的速度.</p>
+<h3 id="设置SLOWLOG"><a href="#设置SLOWLOG" class="headerlink" title="设置SLOWLOG"></a>设置<code>SLOWLOG</code></h3><p>Slow log的行为有两个配置参数指定,可以通过改写redis.conf或者用<code>CONFIG GET</code>和<code>CONFIG SET</code>命令对它们动态的进行修改.<br><br><br><br>第一个选项是<code>slowlog-log-slower-than</code>,它决定要对执行时间大于多少微秒的查询进行记录.(1秒=1000毫秒=1000000微秒).如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CONFIG SET slowlog-log-slower-than 100</span><br></pre></td></tr></table></figure></p>
+<p>第二个选项是<code>slowlog-max-len</code>,它决定slow log最大能保存多少条日志.slow log本身是一个FIFO的队列,当队列大小超过<code>slowlog-max-len</code>时,最旧的一条日志将被删除.如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CONFIG SET slowlog-max-len 1000</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看SLOWLOG"><a href="#查看SLOWLOG" class="headerlink" title="查看SLOWLOG"></a>查看<code>SLOWLOG</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG GET [NUMBER]</span><br></pre></td></tr></table></figure>
+<p>查看number条日志<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 为测试需要，将 slowlog-log-slower-than 设成了 10 微秒</span><br><span class="line"></span><br><span class="line">redis&gt; SLOWLOG GET</span><br><span class="line">1) 1) (integer) 12                      # 唯一性(unique)的日志标识符</span><br><span class="line">   2) (integer) 1324097834              # 被记录命令的执行时间点，以 UNIX 时间戳格式表示</span><br><span class="line">   3) (integer) 16                      # 查询执行时间，以微秒为单位</span><br><span class="line">   4) 1) &quot;CONFIG&quot;                       # 执行的命令，以数组的形式排列</span><br><span class="line">      2) &quot;GET&quot;                          # 这里完整的命令是 CONFIG GET slowlog-log-slower-than</span><br><span class="line">      3) &quot;slowlog-log-slower-than&quot;</span><br><span class="line"></span><br><span class="line">2) 1) (integer) 11</span><br><span class="line">   2) (integer) 1324097825</span><br><span class="line">   3) (integer) 42</span><br><span class="line">   4) 1) &quot;CONFIG&quot;</span><br><span class="line">      2) &quot;GET&quot;</span><br><span class="line">      3) &quot;*&quot;</span><br><span class="line"></span><br><span class="line">3) 1) (integer) 10</span><br><span class="line">   2) (integer) 1324097820</span><br><span class="line">   3) (integer) 11</span><br><span class="line">   4) 1) &quot;CONFIG&quot;</span><br><span class="line">      2) &quot;GET&quot;</span><br><span class="line">      3) &quot;slowlog-log-slower-than&quot;</span><br><span class="line"></span><br><span class="line"># ...</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看当前日志的数量"><a href="#查看当前日志的数量" class="headerlink" title="查看当前日志的数量"></a>查看当前日志的数量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG LEN</span><br></pre></td></tr></table></figure>
+<h3 id="清空日志"><a href="#清空日志" class="headerlink" title="清空日志"></a>清空日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG RESET</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -453,9 +446,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/python/" rel="tag"># python</a>
-          
-            <a href="/tags/jinja/" rel="tag"># jinja</a>
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
           
         </div>
       
@@ -468,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/21/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2019/05/25/Redis的一些命令/" rel="next" title="Redis的一些命令">
+                <i class="fa fa-chevron-left"></i> Redis的一些命令
               </a>
             
           </div>
@@ -477,10 +468,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/21/idea方法模板,显示参数和返回值类型/" rel="prev" title="idea方法模板,显示参数和返回值类型">
-                idea方法模板,显示参数和返回值类型 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -621,7 +608,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#通过meta-yaml里的配置文件-渲染模板文件gs-tpl生成gs-json"><span class="nav-number">1.</span> <span class="nav-text">通过meta.yaml里的配置文件,渲染模板文件gs.tpl生成gs.json</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#设置SLOWLOG"><span class="nav-number">1.</span> <span class="nav-text">设置SLOWLOG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看SLOWLOG"><span class="nav-number">2.</span> <span class="nav-text">查看SLOWLOG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看当前日志的数量"><span class="nav-number">3.</span> <span class="nav-text">查看当前日志的数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#清空日志"><span class="nav-number">4.</span> <span class="nav-text">清空日志</span></a></li></ol></div>
             
 
           </div>
