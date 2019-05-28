@@ -3,7 +3,7 @@ title: Redis的SLOWLOG
 categories:
  - 技术
 tags:
- - Redis
+ - redis
 ---
 
 `Slow log`是Redis用来记录查询执行时间的日志系统.它保存在内存里面,读写速度非常快,不必担心因为开始`slow log`而损害Redis的速度.

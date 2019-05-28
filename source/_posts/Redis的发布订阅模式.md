@@ -3,7 +3,7 @@ title: Redis的发布订阅模式
 categories: 
  - 技术
 tags:
- - Redis
+ - redis
  - Java
 ---
 

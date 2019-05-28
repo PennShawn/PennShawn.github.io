@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,mina,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个session过来,12345678910111213141516171819/** * Starts the inner Processor, asking the executor to pick a thread in its * pool. The Runnable will be renam">
+<meta name="keywords" content="Java,mina">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mina 为每个session构建filterChain">
+<meta property="og:url" content="http://yoursite.com/2019/05/28/Mina 为每个session构建filterChain/index.html">
+<meta property="og:site_name" content="Penn">
+<meta property="og:description" content="AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个session过来,12345678910111213141516171819/** * Starts the inner Processor, asking the executor to pick a thread in its * pool. The Runnable will be renam">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-28T03:34:48.843Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mina 为每个session构建filterChain">
+<meta name="twitter:description" content="AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个session过来,12345678910111213141516171819/** * Starts the inner Processor, asking the executor to pick a thread in its * pool. The Runnable will be renam">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/28/Mina 为每个session构建filterChain/">
+
+
+
+
+
+  <title>Mina 为每个session构建filterChain | Penn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Penn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">my blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/28/Mina 为每个session构建filterChain/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/saiki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Penn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Mina 为每个session构建filterChain</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-28T11:34:48+08:00">
+                2019-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/05/28/Mina 为每个session构建filterChain/" class="leancloud_visitors" data-flag-title="Mina 为每个session构建filterChain">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>AbstractPollingIoProcessor里面有个内部类Processer,只要有第一个session过来,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Starts the inner Processor, asking the executor to pick a thread in its</span><br><span class="line"> * pool. The Runnable will be renamed</span><br><span class="line"> */</span><br><span class="line">private void startupProcessor() &#123;</span><br><span class="line">    Processor processor = processorRef.get();</span><br><span class="line"></span><br><span class="line">    if (processor == null) &#123;</span><br><span class="line">        processor = new Processor();</span><br><span class="line"></span><br><span class="line">        if (processorRef.compareAndSet(null, processor)) &#123;</span><br><span class="line">            executor.execute(new NamePreservingRunnable(processor, threadName));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Just stop the select() and start it again, so that the processor</span><br><span class="line">    // can be activated immediately.</span><br><span class="line">    wakeup();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Processer就会执行循环,循环里面有个方法<code>handleNewSessions()</code>,一直从newSessions这个Queue<s>中取poll()出session,然后addNow(session)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * Loops over the new sessions blocking queue and returns the number of</span><br><span class="line">    * sessions which are effectively created</span><br><span class="line">    * </span><br><span class="line">    * @return The number of new sessions</span><br><span class="line">    */</span><br><span class="line">   private int handleNewSessions() &#123;</span><br><span class="line">       int addedSessions = 0;</span><br><span class="line"></span><br><span class="line">       for (S session = newSessions.poll(); session != null; session = newSessions.poll()) &#123;</span><br><span class="line">           if (addNow(session)) &#123;</span><br><span class="line">               // A new session has been created</span><br><span class="line">               addedSessions++;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       return addedSessions;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></s></p>
+<p>在addNow(S)中,会调用session的<code>chainBuilder</code>的<code>chainBuilder.buildFilterChain(session.getFilterChain());</code>,最后发送<code>listeners.fireSessionCreated(session);</code>事件.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * Process a new session : - initialize it - create its chain - fire the</span><br><span class="line">     * CREATED listeners if any</span><br><span class="line">     * </span><br><span class="line">     * @param session The session to create</span><br><span class="line">     * @return &lt;tt&gt;true&lt;/tt&gt; if the session has been registered</span><br><span class="line">     */</span><br><span class="line">    private boolean addNow(S session) &#123;</span><br><span class="line">        boolean registered = false;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            init(session);</span><br><span class="line">            registered = true;</span><br><span class="line"></span><br><span class="line">            // Build the filter chain of this session.</span><br><span class="line">            IoFilterChainBuilder chainBuilder = session.getService().getFilterChainBuilder();</span><br><span class="line">            chainBuilder.buildFilterChain(session.getFilterChain());</span><br><span class="line"></span><br><span class="line">            // DefaultIoFilterChain.CONNECT_FUTURE is cleared inside here</span><br><span class="line">            // in AbstractIoFilterChain.fireSessionOpened().</span><br><span class="line">            // Propagate the SESSION_CREATED event up to the chain</span><br><span class="line">            IoServiceListenerSupport listeners = ((AbstractIoService) session.getService()).getListeners();</span><br><span class="line">            listeners.fireSessionCreated(session);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            ExceptionMonitor.getInstance().exceptionCaught(e);</span><br><span class="line"></span><br><span class="line">            try &#123;</span><br><span class="line">                destroy(session);</span><br><span class="line">            &#125; catch (Exception e1) &#123;</span><br><span class="line">                ExceptionMonitor.getInstance().exceptionCaught(e1);</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                registered = false;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return registered;</span><br><span class="line">    &#125;</span><br><span class="line">`buildFilterChain`就会遍历最开始</span><br><span class="line">`acceptor.getFilterChain().addLast(&quot;protocol&quot;,</span><br><span class="line">                new ProtocolCodecFilter(new NetCodecFactory()));</span><br><span class="line">        acceptor.getFilterChain().addLast(&quot;session&quot;, new SessionFilter());</span><br><span class="line">        acceptor.getFilterChain().addLast(&quot;security&quot;, new SecurityFilter());`</span><br><span class="line">这些方法构建的的`erties`,对session的filterChain进行`addLast`:</span><br></pre></td></tr></table></figure></p>
+<p>public void buildFilterChain(IoFilterChain chain) throws Exception {<br>        for (Entry e : entries) {<br>            chain.addLast(e.getName(), e.getFilter());<br>        }<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`addLast`中,会对每一个entry进行注册,</span><br></pre></td></tr></table></figure></p>
+<p>public synchronized void addLast(String name, IoFilter filter) {<br>        checkAddable(name);<br>        register(tail.prevEntry, name, filter);<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里的entry就是在之前的addLast里创建的</span><br></pre></td></tr></table></figure></p>
+<p>/**</p>
+<pre><code> * @see IoFilterChain#addLast(String, IoFilter)
+ * 
+ * @param name The filter&apos;s name
+ * @param filter The filter to add
+ */
+public synchronized void addLast(String name, IoFilter filter) {
+    register(entries.size(), new EntryImpl(name, filter));
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此处的EntryImpl只需要用到name和filter</span><br></pre></td></tr></table></figure>
+<p>private final class EntryImpl implements Entry {<br>        private final String name;</p>
+<pre><code>private volatile IoFilter filter;
+
+private EntryImpl(String name, IoFilter filter) {
+    if (name == null) {
+        throw new IllegalArgumentException(&quot;name&quot;);
+    }
+
+    if (filter == null) {
+        throw new IllegalArgumentException(&quot;filter&quot;);
+    }
+
+    this.name = name;
+    this.filter = filter;
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">接上面的buildFilterChain的addLast,这里才是构建真正的filterChain,里面的entry有完整的preEntry、nextEntry、filter、nextFilter等属性.</span><br></pre></td></tr></table></figure>
+<p> /**</p>
+<pre><code> * Register the newly added filter, inserting it between the previous and
+ * the next filter in the filter&apos;s chain. We also call the preAdd and
+ * postAdd methods.
+ */
+private void register(EntryImpl prevEntry, String name, IoFilter filter) {
+    EntryImpl newEntry = new EntryImpl(prevEntry, prevEntry.nextEntry, name, filter);
+
+    try {
+        filter.onPreAdd(this, name, newEntry.getNextFilter());
+    } catch (Exception e) {
+        throw new IoFilterLifeCycleException(&quot;onPreAdd(): &quot; + name + &apos;:&apos; + filter + &quot; in &quot; + getSession(), e);
+    }
+
+    prevEntry.nextEntry.prevEntry = newEntry;
+    prevEntry.nextEntry = newEntry;
+    name2entry.put(name, newEntry);
+
+    try {
+        filter.onPostAdd(this, name, newEntry.getNextFilter());
+    } catch (Exception e) {
+        deregister0(newEntry);
+        throw new IoFilterLifeCycleException(&quot;onPostAdd(): &quot; + name + &apos;:&apos; + filter + &quot; in &quot; + getSession(), e);
+    }
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里先跟更具filter和name,先new一个新的`EntryImpl`,插入到`tail`的前面.EntryImpl源码如下:</span><br></pre></td></tr></table></figure>
+<p>private final class EntryImpl implements Entry {<br>        private EntryImpl prevEntry;</p>
+<pre><code>private EntryImpl nextEntry;
+
+private final String name;
+
+private IoFilter filter;
+
+private final NextFilter nextFilter;
+
+private EntryImpl(EntryImpl prevEntry, EntryImpl nextEntry, String name, IoFilter filter) {
+    if (filter == null) {
+        throw new IllegalArgumentException(&quot;filter&quot;);
+    }
+
+    if (name == null) {
+        throw new IllegalArgumentException(&quot;name&quot;);
+    }
+
+    this.prevEntry = prevEntry;
+    this.nextEntry = nextEntry;
+    this.name = name;
+    this.filter = filter;
+    this.nextFilter = new NextFilter() {
+        public void sessionCreated(IoSession session) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextSessionCreated(nextEntry, session);
+        }
+
+        public void sessionOpened(IoSession session) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextSessionOpened(nextEntry, session);
+        }
+
+        public void sessionClosed(IoSession session) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextSessionClosed(nextEntry, session);
+        }
+
+        public void sessionIdle(IoSession session, IdleStatus status) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextSessionIdle(nextEntry, session, status);
+        }
+
+        public void exceptionCaught(IoSession session, Throwable cause) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextExceptionCaught(nextEntry, session, cause);
+        }
+
+        public void inputClosed(IoSession session) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextInputClosed(nextEntry, session);
+        }
+
+        public void messageReceived(IoSession session, Object message) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextMessageReceived(nextEntry, session, message);
+        }
+
+        public void messageSent(IoSession session, WriteRequest writeRequest) {
+            Entry nextEntry = EntryImpl.this.nextEntry;
+            callNextMessageSent(nextEntry, session, writeRequest);
+        }
+
+        public void filterWrite(IoSession session, WriteRequest writeRequest) {
+            Entry nextEntry = EntryImpl.this.prevEntry;
+            callPreviousFilterWrite(nextEntry, session, writeRequest);
+        }
+
+        public void filterClose(IoSession session) {
+            Entry nextEntry = EntryImpl.this.prevEntry;
+            callPreviousFilterClose(nextEntry, session);
+        }
+
+        public String toString() {
+            return EntryImpl.this.nextEntry.name;
+        }
+    };
+}
+</code></pre><p><code>`</code><br>最终,一个双向链表构建完成了,一般事件从head到tail,<code>filterClose</code>和<code>filterWrite</code>是从tail到head.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>这两个图片是什么?可以扫吗?</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatPay.png" alt="Shen 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/aliPay.png" alt="Shen 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/mina/" rel="tag"># mina</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/28/Mina nextFilter/" rel="next" title="Mina nextFilter">
+                <i class="fa fa-chevron-left"></i> Mina nextFilter
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/28/Mina中的观察者模式/" rel="prev" title="Mina中的观察者模式">
+                Mina中的观察者模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjA1OS8xODYwNg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/saiki.jpeg" alt="Shen">
+            
+              <p class="site-author-name" itemprop="name">Shen</p>
+              <p class="site-description motion-element" itemprop="description">Penn's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Gst71Gv0w5HKejm5H7LuG0XI-gzGzoHsz", "aoFAyHFDKihGTWWhHX0p8byC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

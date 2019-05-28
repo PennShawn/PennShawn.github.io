@@ -4,7 +4,7 @@ categories:
 - 技术
 tags:
 - Java
-- Redis
+- redis
 ---
 
 
