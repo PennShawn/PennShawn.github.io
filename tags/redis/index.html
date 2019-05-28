@@ -83,7 +83,7 @@
 <meta name="keywords" content="keywords">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Penn">
-<meta property="og:url" content="http://yoursite.com/tags/Redis/index.html">
+<meta property="og:url" content="http://yoursite.com/tags/redis/index.html">
 <meta property="og:site_name" content="Penn">
 <meta property="og:description" content="Penn&apos;s blog">
 <meta property="og:locale" content="zh-Hans">
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/Redis/">
+  <link rel="canonical" href="http://yoursite.com/tags/redis/">
 
 
 
 
 
-  <title>标签: Redis | Penn</title>
+  <title>标签: redis | Penn</title>
   
 
 
@@ -285,7 +285,7 @@
 
     <div id="posts" class="posts-collapse">
       <div class="collection-title">
-        <h1>Redis<small>标签</small>
+        <h1>redis<small>标签</small>
         </h1>
       </div>
 
@@ -297,17 +297,17 @@
 
       <h2 class="post-title">
         
-            <a class="post-title-link" href="/2019/05/27/Redis的发布订阅模式/" itemprop="url">
+            <a class="post-title-link" href="/2019/05/28/Redis的SCAN命令/" itemprop="url">
               
-                <span itemprop="name">Redis的发布订阅模式</span>
+                <span itemprop="name">Redis的SCAN命令</span>
               
             </a>
         
       </h2>
 
       <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-27T17:30:56+08:00" content="2019-05-27">
-          05-27
+        <time class="post-time" itemprop="dateCreated" datetime="2019-05-28T11:42:14+08:00" content="2019-05-28">
+          05-28
         </time>
       </div>
 
@@ -323,43 +323,17 @@
 
       <h2 class="post-title">
         
-            <a class="post-title-link" href="/2019/05/25/Redis的SLOWLOG/" itemprop="url">
+            <a class="post-title-link" href="/2019/05/28/Redis/" itemprop="url">
               
-                <span itemprop="name">Redis的SLOWLOG</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-25T19:05:46+08:00" content="2019-05-25">
-          05-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/25/Redis的一些命令/" itemprop="url">
-              
-                <span itemprop="name">Redis的一些命令</span>
+                <span itemprop="name">Redis</span>
               
             </a>
         
       </h2>
 
       <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-25T17:21:58+08:00" content="2019-05-25">
-          05-25
+        <time class="post-time" itemprop="dateCreated" datetime="2019-05-28T11:35:05+08:00" content="2019-05-28">
+          05-28
         </time>
       </div>
 
@@ -423,7 +397,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">69</span>
+                  <span class="site-state-item-count">70</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -739,6 +713,47 @@
               success: function(newcounter) {
                 var $element = $(document.getElementById(url));
                 $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+ment.find('.leancloud-visitors-count').text(newcounter.get('time'));
               },
               error: function(newcounter, error) {
                 console.log('Failed to create');

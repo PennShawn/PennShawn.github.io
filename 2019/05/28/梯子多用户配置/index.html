@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="linux,梯子,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第一次是在ubantu下操作,版本18.4,内核版本4.15 比4.9高.运行命令|grep bbr ```1234结果``` root@vultr:~# lsmod |grep bbrtcp_bbr                20480  5 说明已经开启bbr,不需要其他操作  然后安装ss12#：apt-get install python-pip#：pip install shadow">
+<meta name="keywords" content="linux,梯子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="梯子多用户配置">
+<meta property="og:url" content="http://yoursite.com/2019/05/28/梯子多用户配置/index.html">
+<meta property="og:site_name" content="Penn">
+<meta property="og:description" content="第一次是在ubantu下操作,版本18.4,内核版本4.15 比4.9高.运行命令|grep bbr ```1234结果``` root@vultr:~# lsmod |grep bbrtcp_bbr                20480  5 说明已经开启bbr,不需要其他操作  然后安装ss12#：apt-get install python-pip#：pip install shadow">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-28T03:34:48.866Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="梯子多用户配置">
+<meta name="twitter:description" content="第一次是在ubantu下操作,版本18.4,内核版本4.15 比4.9高.运行命令|grep bbr ```1234结果``` root@vultr:~# lsmod |grep bbrtcp_bbr                20480  5 说明已经开启bbr,不需要其他操作  然后安装ss12#：apt-get install python-pip#：pip install shadow">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/28/梯子多用户配置/">
+
+
+
+
+
+  <title>梯子多用户配置 | Penn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Penn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">my blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/28/梯子多用户配置/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/saiki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Penn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">梯子多用户配置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-28T11:34:48+08:00">
+                2019-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/05/28/梯子多用户配置/" class="leancloud_visitors" data-flag-title="梯子多用户配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>第一次是在ubantu下操作,版本18.4,内核版本4.15 比4.9高.<br>运行命令<br><figure class="highlight plain"><figcaption><span>|grep bbr ```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">结果</span><br><span class="line">``` </span><br><span class="line">root@vultr:~# lsmod |grep bbr</span><br><span class="line">tcp_bbr                20480  5</span><br></pre></td></tr></table></figure></p>
+<p>说明已经开启bbr,不需要其他操作</p>
+<hr>
+<p>然后安装ss<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#：apt-get install python-pip</span><br><span class="line">#：pip install shadowsocks</span><br></pre></td></tr></table></figure></p>
+<p>centos7安装pip用<code>yum install python-pip</code></p>
+<p>安装ss的时候报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@vultr:~# pip install shadowsocks</span><br><span class="line">Collecting shadowsocks</span><br><span class="line">  Downloading https://files.pythonhosted.org/packages/02/1e/e3a5135255d06813aca6631da31768d44f63692480af3a1621818008eb4a/shadowsocks-2.8.2.tar.gz</span><br><span class="line">    Complete output from command python setup.py egg_info:</span><br><span class="line">    Traceback (most recent call last):</span><br><span class="line">      File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;</span><br><span class="line">    ImportError: No module named setuptools</span><br><span class="line"></span><br><span class="line">    ----------------------------------------</span><br><span class="line">Command &quot;python setup.py egg_info&quot; failed with error code 1 in /tmp/pip-build-Q7TlHV/shadowsocks/</span><br></pre></td></tr></table></figure></p>
+<p>(可能是python一些东西版本太低)<br>运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo python -m pip install --upgrade --force pip </span><br><span class="line">sudo pip install setuptools==33.1.1</span><br></pre></td></tr></table></figure></p>
+<p>然后再安装ss,还是报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@vultr:~# pip install shadowsocks</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;/usr/bin/pip&quot;, line 9, in &lt;module&gt;</span><br><span class="line">    from pip import main</span><br><span class="line">ImportError: cannot import name main</span><br></pre></td></tr></table></figure></p>
+<p>因为将pip更新后库里面的函数有所变动造成这个问题。 解决方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /usr/bin/pip</span><br><span class="line">将原来的：</span><br><span class="line"></span><br><span class="line">from pip import main</span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    sys.exit(main())</span><br><span class="line">    </span><br><span class="line">改成：</span><br><span class="line"></span><br><span class="line">from pip import __main__</span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    sys.exit(__main__._main())</span><br></pre></td></tr></table></figure></p>
+<p>gedit可以由vi代替,注意“–”和“-”的区别.<br>再安装就成功了.<br>顺便配一下多用户.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/shadowsocks.json</span><br></pre></td></tr></table></figure></p>
+<p>然后编辑<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;server&quot;: &quot;0.0.0.0&quot;,</span><br><span class="line">&quot;port_password&quot;: &#123;</span><br><span class="line">&quot;8381&quot;: &quot;password1&quot;,</span><br><span class="line">&quot;8382&quot;: &quot;password2&quot;,</span><br><span class="line">&quot;8383&quot;: &quot;password3&quot;,</span><br><span class="line">&quot;8384&quot;: &quot;password4&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;timeout&quot;: 300,</span><br><span class="line">&quot;method&quot;: &quot;aes-256-cfb&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>再启动服务<figure class="highlight plain"><figcaption><span>-c</span><a href="/etc/shadowsocks.json">-d start```</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">报错:</span><br></pre></td></tr></table></figure></p>
+<p>AttributeError: /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1: undefined symbol: EVP_CIPHER_CTX_cleanup<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">google后,按照&lt;https://blog.csdn.net/blackfrog_unique/article/details/60320737&gt;大佬解释,这个问题是由于在openssl1.1.0版本中，废弃了EVP_CIPHER_CTX_cleanup函数.</span><br></pre></td></tr></table></figure></p>
+<p>修改方法：</p>
+<p>用vim打开文件：vim /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py (该路径请根据自己的系统情况自行修改，如果不知道该文件在哪里的话，可以使用find命令查找文件位置)<br>跳转到52行（shadowsocks2.8.2版本，其他版本搜索一下cleanup）<br>进入编辑模式<br>将第52行libcrypto.EVP_CIPHER_CTX_cleanup.argtypes = (c_void_p,)<br>改为libcrypto.EVP_CIPHER_CTX_reset.argtypes = (c_void_p,)<br>再次搜索cleanup（全文件共2处，此处位于111行），将libcrypto.EVP_CIPHER_CTX_cleanup(self._ctx)<br>改为libcrypto.EVP_CIPHER_CTX_reset(self._ctx)<br>保存并退出<br>启动shadowsocks服务：service shadowsocks start 或 sslocal -c ss配置文件目录<br>问题解决<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">之后```ssserver -c /etc/shadowsocks.json -d start```正常启动.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-------</span><br><span class="line">2019-1-25</span><br><span class="line"> 今天又来配置了一遍ss,配置文件如下</span><br></pre></td></tr></table></figure></p>
+<p> {<br>“server”:”0.0.0.0”,<br>“password”:{<br>“8381”:”password1”,<br>“8382”:”password2”,<br>“8383”:”password3”,<br>“8384”:”password4”<br>},<br>“timeout”:”300”,<br>“method”:”aes-256-cfb”<br>}<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">运行```ssserver -c /etc/shadowsocks.json -d start```时,报错</span><br><span class="line">`</span><br></pre></td></tr></table></figure></p>
+<p> [root@vultr shadowsocks]# ssserver -c /etc/shadowsocks.json<br>INFO: loading config from /etc/shadowsocks.json<br>Traceback (most recent call last):<br>  File “/usr/bin/ssserver”, line 9, in <module><br>    load_entry_point(‘shadowsocks==2.8.2’, ‘console_scripts’, ‘ssserver’)()<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/server.py”, line 34, in main<br>    config = shell.get_config(False)<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/shell.py”, line 262, in get_config<br>    check_config(config, is_local)<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/shell.py”, line 124, in check_config<br>    encrypt.try_cipher(config[‘password’], config[‘method’])<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/encrypt.py”, line 44, in try_cipher<br>    Encryptor(key, method)<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/encrypt.py”, line 83, in <strong>init</strong><br>    random_string(self._method_info[1]))<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/encrypt.py”, line 100, in get_cipher<br>    key, iv_ = EVP_BytesToKey(password, m[0], m[1])<br>  File “/usr/lib/python2.7/site-packages/shadowsocks/encrypt.py”, line 61, in EVP_BytesToKey<br>    md5.update(data)<br>TypeError: must be string or buffer, not dict<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">网上找了半天,没有找到类似错误的.最后只能自己分析.</span><br><span class="line">TypeError说明是类型错误,最下面报错的地方是</span><br><span class="line">``` File &quot;/usr/lib/python2.7/site-packages/shadowsocks/encrypt.py&quot;, line 61, in EVP_BytesToKey</span><br><span class="line">   md5.update(data)</span><br></pre></td></tr></table></figure></module></p>
+<p>去了文件的第61行一看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">while len(b&apos;&apos;.join(m)) &lt; (key_len + iv_len):</span><br><span class="line">    57         md5 = hashlib.md5()</span><br><span class="line">    58         data = password</span><br><span class="line">    59         if i &gt; 0:</span><br><span class="line">    60             data = m[i - 1] + password</span><br><span class="line">    61         md5.update(data)</span><br><span class="line">    62         m.append(md5.digest())</span><br><span class="line">    63         i += 1</span><br></pre></td></tr></table></figure></p>
+<p>应该是穿入password错误,不应该是dict.但是我配置的是多用户,有多个端口和对应的密码,只能传dict.再一看配置文件,原来多用户需要将”password”改为”port_password”.</p>
+<p>之后运行<figure class="highlight plain"><figcaption><span>-c</span><a href="/etc/shadowsocks.json```">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">还是报</span><br><span class="line">```AttributeError: /lib64/libcrypto.so.10: undefined symbol: EVP_CIPHER_CTX_reset</span><br></pre></td></tr></table></figure></p>
+<p>根据openssl官网<a href="https://www.openssl.org/docs/man1.1.0/crypto/EVP_CIPHER_CTX_reset.html" target="_blank" rel="noopener">https://www.openssl.org/docs/man1.1.0/crypto/EVP_CIPHER_CTX_reset.html</a><br>的说法,EVP_CIPHER_CTX was made opaque in OpenSSL 1.1.0. As a result, EVP_CIPHER_CTX_reset() appeared and EVP_CIPHER_CTX_cleanup() disappeared. EVP_CIPHER_CTX_init() remains as an alias for EVP_CIPHER_CTX_reset().<br>用reset替代了cleanup,我之前也换了啊.最后,只能尝试一下,用reset的别名init替代,最后运行成功了!  ???</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@vultr shadowsocks]# vi /usr/lib/python2.7/site-packages/shadowsocks/crypto/openssl.py</span><br><span class="line">[root@vultr shadowsocks]# ssserver -c /etc/shadowsocks.json</span><br><span class="line">INFO: loading config from /etc/shadowsocks.json</span><br><span class="line">2019-01-25 07:40:11 INFO     loading libcrypto from libcrypto.so.10</span><br><span class="line">2019-01-25 07:40:11 INFO     starting server at 0.0.0.0:8384</span><br><span class="line">2019-01-25 07:40:11 INFO     starting server at 0.0.0.0:8383</span><br><span class="line">2019-01-25 07:40:11 INFO     starting server at 0.0.0.0:8382</span><br><span class="line">2019-01-25 07:40:11 INFO     starting server at 0.0.0.0:8381</span><br></pre></td></tr></table></figure>
+<p>然后配置自启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/systemd/system/shadowsocks.service</span><br></pre></td></tr></table></figure></p>
+<p>内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Shadowsocks</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure></p>
+<p>然后运行这三个命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@vultr shadowsocks]# systemctl enable shadowsocks</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/shadowsocks.service to /etc/systemd/system/shadowsocks.service.</span><br><span class="line">[root@vultr shadowsocks]# systemctl start shadowsocks</span><br><span class="line">[root@vultr shadowsocks]# systemctl status shadowsocks -l</span><br><span class="line"> shadowsocks.service</span><br><span class="line">   Loaded: loaded (/etc/systemd/system/shadowsocks.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Fri 2019-01-25 08:14:35 UTC; 3min 22s ago</span><br><span class="line"> Main PID: 4264 (ssserver)</span><br><span class="line">   CGroup: /system.slice/shadowsocks.service</span><br><span class="line">           └─4264 /usr/bin/python2 /usr/bin/ssserver -c /etc/shadowsocks.json</span><br></pre></td></tr></table></figure></p>
+<p>状态是active说明启动成功</p>
+<p>然后关闭防火墙<br><figure class="highlight plain"><figcaption><span>stop firewalld```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看日志</span><br></pre></td></tr></table></figure></p>
+<p>[root@vultr bin]# journalctl -u shadowsocks.service -f<br>– Logs begin at Fri 2019-01-25 06:19:58 UTC. –<br>Jan 25 08:14:36 vultr.guest ssserver[4264]: 2019-01-25 08:14:36 INFO     starting server at 0.0.0.0:8381<br>Jan 25 08:22:56 vultr.guest systemd[1]: Stopping shadowsocks.service…<br>Jan 25 08:22:56 vultr.guest systemd[1]: Stopped shadowsocks.service.<br>Jan 25 08:23:06 vultr.guest systemd[1]: Started shadowsocks.service.<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: INFO: loading config from /etc/shadowsocks.json<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: 2019-01-25 08:23:06 INFO     loading libcrypto from libcrypto.so.10<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: 2019-01-25 08:23:06 INFO     starting server at 0.0.0.0:8384<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: 2019-01-25 08:23:06 INFO     starting server at 0.0.0.0:8383<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: 2019-01-25 08:23:06 INFO     starting server at 0.0.0.0:8382<br>Jan 25 08:23:06 vultr.guest ssserver[4301]: 2019-01-25 08:23:06 INFO     starting server at 0.0.0.0:8381<br><code>`</code><br>手机移动网一直连不上不知道什么情况<br>公司网就可以.</p>
+<p>不翻墙只能连新加坡服务器</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>这两个图片是什么?可以扫吗?</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatPay.png" alt="Shen 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/aliPay.png" alt="Shen 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/梯子/" rel="tag"># 梯子</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/28/最简单的搭梯子方法/" rel="next" title="最简单的搭梯子方法">
+                <i class="fa fa-chevron-left"></i> 最简单的搭梯子方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/28/梯子KCP加速/" rel="prev" title="梯子KCP加速">
+                梯子KCP加速 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjA1OS8xODYwNg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/saiki.jpeg" alt="Shen">
+            
+              <p class="site-author-name" itemprop="name">Shen</p>
+              <p class="site-description motion-element" itemprop="description">Penn's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Gst71Gv0w5HKejm5H7LuG0XI-gzGzoHsz", "aoFAyHFDKihGTWWhHX0p8byC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
