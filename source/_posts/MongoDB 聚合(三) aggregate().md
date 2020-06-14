@@ -3,7 +3,7 @@ title: MongoDB 聚合(三) aggregate()
 categories :
 - 技术
 tags :
-- Mongo
+- MongoDB
 ---
 
 MongoDB中聚合(aggregate)主要用于处理数据(诸如统计平均值,求和等)，并返回计算后的数据结果。有点类似sql语句中的 count(*)。

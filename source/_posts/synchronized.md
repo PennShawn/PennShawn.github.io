@@ -4,6 +4,7 @@ categories :
 - 技术
 tags :
 - Java
+- 多线程
 ---
 
 synchronized可以分成5类用法,可以用来修饰 实例方法

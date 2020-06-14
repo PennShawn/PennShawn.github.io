@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="反射是Java在运行时,可以访问、检测和修改它的本身状态或行为的一种能力. 首先的知道Class的概念: JVM为每种类型的类维护一个Class对象,里面包含了该类的结构、属性和方法等信息.我们使用javac编译,产生的.class文件保存着该类的对象,JVM加载一个类就是指加载该.class文件. 关于反射,以我目前的经验来看,可以主要关注下面几点:  Field: 描述该类的属性; Metho">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反射机制">
+<meta property="og:url" content="http://yoursite.com/2020/06/14/Java反射机制/index.html">
+<meta property="og:site_name" content="Penn">
+<meta property="og:description" content="反射是Java在运行时,可以访问、检测和修改它的本身状态或行为的一种能力. 首先的知道Class的概念: JVM为每种类型的类维护一个Class对象,里面包含了该类的结构、属性和方法等信息.我们使用javac编译,产生的.class文件保存着该类的对象,JVM加载一个类就是指加载该.class文件. 关于反射,以我目前的经验来看,可以主要关注下面几点:  Field: 描述该类的属性; Metho">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-06-14T07:38:09.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java反射机制">
+<meta name="twitter:description" content="反射是Java在运行时,可以访问、检测和修改它的本身状态或行为的一种能力. 首先的知道Class的概念: JVM为每种类型的类维护一个Class对象,里面包含了该类的结构、属性和方法等信息.我们使用javac编译,产生的.class文件保存着该类的对象,JVM加载一个类就是指加载该.class文件. 关于反射,以我目前的经验来看,可以主要关注下面几点:  Field: 描述该类的属性; Metho">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/14/Java反射机制/">
+
+
+
+
+
+  <title>Java反射机制 | Penn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Penn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">my blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/14/Java反射机制/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/saiki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Penn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java反射机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T15:38:09+08:00">
+                2020-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/06/14/Java反射机制/" class="leancloud_visitors" data-flag-title="Java反射机制">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>反射是Java在运行时,可以访问、检测和修改它的本身状态或行为的一种能力.</p>
+<p>首先的知道Class的概念: JVM为每种类型的类维护一个Class对象,里面包含了该类的结构、属性和方法等信息.我们使用javac编译,产生的.class文件保存着该类的对象,JVM加载一个类就是指加载该.class文件.</p>
+<p>关于反射,以我目前的经验来看,可以主要关注下面几点:</p>
+<ol>
+<li>Field: 描述该类的属性;</li>
+<li>Method: 该类的方法</li>
+<li>Constructor: 该类的构造器</li>
+<li>Modifier: 修饰符信息</li>
+</ol>
+<p>先准备两个类用于实验:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public class Person &#123;</span><br><span class="line">    public String name; // 姓名 公有</span><br><span class="line">    protected String age;   // 年龄 保护</span><br><span class="line">    private String hobby;   // 爱好   私有</span><br><span class="line"></span><br><span class="line">    public Person(String name, String age, String hobby) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">        this.hobby = hobby;</span><br><span class="line">    &#125;</span><br><span class="line">    public String getHobby() &#123;</span><br><span class="line">        return hobby;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Employee extends Person &#123;</span><br><span class="line">    public static Integer totalNum = 0; // 员工数</span><br><span class="line">    public int empNo;   // 员工编号 公有</span><br><span class="line">    protected String position;  // 职位 保护</span><br><span class="line">    private int salary; // 工资   私有</span><br><span class="line"></span><br><span class="line">    public void sayHello() &#123;</span><br><span class="line">        System.out.println(String.format(&quot;Hello, 我是 %s, 今年 %s 岁, 爱好是%s, 我目前的工作是%s, 月入%s元\n&quot;, name, age, getHobby(), position, salary));</span><br><span class="line">    &#125;</span><br><span class="line">    private void work() &#123;</span><br><span class="line">        System.out.println(String.format(&quot;My name is %s, 工作中勿扰.&quot;, name));</span><br><span class="line">    &#125;</span><br><span class="line">    public Employee(String name, String age, String hobby, int empNo, String position, int salary) &#123;</span><br><span class="line">        super(name, age, hobby);</span><br><span class="line">        this.empNo = empNo;</span><br><span class="line">        this.position = position;</span><br><span class="line">        this.salary = salary;</span><br><span class="line">        Employee.totalNum++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="获取class对象"><a href="#获取class对象" class="headerlink" title="获取class对象"></a>获取class对象</h5><p>获取class对象的方式有三种: </p>
+<ol>
+<li>通过Class类的forName方法,通过路径获取对象;</li>
+<li>直接通过类名.class方法,获取该类的class对象;</li>
+<li>通过该类的一个实例的.getClass()方法.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class ClassTest &#123;</span><br><span class="line">    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        Class c1 = Class.forName(&quot;reflect.Employee&quot;);   // 第1种，forName 方式获取Class对象</span><br><span class="line">        Class c2 = Employee.class;      // 第2种，直接通过类获取Class对象</span><br><span class="line">        Employee employee = new Employee(&quot;小明&quot;, &quot;18&quot;, &quot;写代码&quot;, 1, &quot;Java攻城狮&quot;, 100000);</span><br><span class="line">        Class c3 = employee.getClass();    // 第3种，通过调用对象的getClass()方法获取Class对象</span><br><span class="line"></span><br><span class="line">        if (c1 == c2 &amp;&amp; c1 == c3) &#123;     // 可以通过 == 比较Class对象是否为同一个对象</span><br><span class="line">            System.out.println(&quot;c1、c2、c3 为同一个对象&quot;);</span><br><span class="line">            System.out.println(c1);     // class reflect.Employee</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="通过反射来创建实例"><a href="#通过反射来创建实例" class="headerlink" title="通过反射来创建实例"></a>通过反射来创建实例</h5><p>通过反射来创建一个类的实例的方法有两种:</p>
+<ol>
+<li>使用Class对象的newInstance()方法来创建Class对象对应类的实例</li>
+<li>先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class NewInstanceTest &#123;</span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException &#123;</span><br><span class="line">        Class c = Date.class;</span><br><span class="line">        Date date1 = (Date) c.newInstance();    // 第1种方式：使用Class对象的newInstance()方法来创建Class对象对应类的实例</span><br><span class="line">        System.out.println(date1);      // Wed Dec 19 22:57:16 CST 2018</span><br><span class="line"></span><br><span class="line">        long timestamp =date1.getTime();</span><br><span class="line">        Constructor constructor = c.getConstructor(long.class); </span><br><span class="line">        Date date2 = (Date)constructor.newInstance(timestamp);  // 第2种方式：先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例</span><br><span class="line">        System.out.println(date2);  // Wed Dec 19 22:57:16 CST 2018</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="获取类信息的部分API"><a href="#获取类信息的部分API" class="headerlink" title="获取类信息的部分API"></a>获取类信息的部分API</h4><p><code>String getName()</code> 获取这个Class的类名</p>
+<p><code>Constructor[] getDeclaredConstructors()</code> 返回这个类的所有构造器的对象数组，包含保护和私有的构造器；相近的方法 getConstructors() 则返回这个类的所有公有构造器的对象数组，不包含保护和私有的构造器</p>
+<p><code>Method[] getDeclaredMethods()</code> 返回这个类或接口的所有方法，包括保护和私有的方法，不包括超类的方法；相近的方法 getMethods() 则返回这个类及其超类的公有方法的对象数组，不含保护和私有的方法</p>
+<p><code>Field[] getDeclaredFields()</code> 返回这个类的所有域的对象数组，包括保护域和私有域，不包括超类的域；还有一个相近的API getFields()，返回这个类及其超类的公有域的对象数组，不含保护域和私有域</p>
+<p><code>int getModifiers()</code> 返回一个用于描述Field、Method和Constructor的修饰符的整形数值，该数值代表的含义可通过Modifier这个类分析</p>
+<p><code>Modifier</code> 类 它提供了有关Field、Method和Constructor等的访问修饰符的信息，主要的方法有：toString(int modifiers)返回整形数值modifiers代表的修饰符的字符串；isAbstract是否被abstract修饰；isVolatile是否被volatile修饰；isPrivate是否为private；isProtected是否为protected；isPublic是否为public；isStatic是否为static修饰；等等，见名知义</p>
+<h4 id="运行时查看对象数据域实际内容的相关API"><a href="#运行时查看对象数据域实际内容的相关API" class="headerlink" title="运行时查看对象数据域实际内容的相关API"></a>运行时查看对象数据域实际内容的相关API</h4><p><code>Class&lt;?&gt; getComponentType()</code> 返回数组类里组件类型的 Class，如果不是数组类则返回null</p>
+<p><code>boolean isArray()</code> 返回这个类是否为数组，同类型的API还有 isAnnotation、isAsciiDigit、isEnum、isInstance、isInterface、isLocalClass、isPrimitive 等</p>
+<p><code>int Array.getLength(obj)</code> 返回数组对象obj的长度</p>
+<p><code>Object Array.get(obj, i)</code> 获取数组对象下标为i的元素</p>
+<p><code>boolean isPrimitive()</code> 返回这个类是否为8种基本类型之一，即是否为boolean, byte, char, short, int, long, float, 和double 等原始类型</p>
+<p><code>Field getField(String name)</code> 获取指定名称的域对象</p>
+<p><code>AccessibleObject.setAccessible(fields, true)</code> 当访问 Field、Method 和 Constructor 的时候Java会执行访问检查，如果访问者没有权限将抛出SecurityException，譬如访问者是无法访问private修饰的域的。通过设置 setAccessible(true) 可以取消Java的执行访问检查，这样访问者就获得了指定 Field、Method 或 Constructor 访问权限</p>
+<p><code>Class&lt;?&gt; Field.getType()</code> 返回一个Class 对象，它标识了此 Field 对象所表示字段的声明类型</p>
+<p><code>Object Field.get(Object obj)</code> 获取obj对象上当前域对象表示的属性的实际值，获取到的是一个Object对象，实际使用中还需要转换成实际的类型，或者可以通过 getByte()、getChar、getInt() 等直接获取具体类型的值</p>
+<p><code>void Field.set(Object obj, Object value)</code> 设置obj对象上当前域表示的属性的实际值</p>
+<h4 id="调用任意方法"><a href="#调用任意方法" class="headerlink" title="调用任意方法"></a>调用任意方法</h4><p>上面查看Field的实际值是通过 Field 类的 get() 方法，与之类似，Method 调用方法是通过 Method 类的 invoke 方法</p>
+<h5 id="调用任意方法相关的API"><a href="#调用任意方法相关的API" class="headerlink" title="调用任意方法相关的API"></a>调用任意方法相关的API</h5><p><code>Method getMethod(String name, Class&lt;?&gt;... parameterTypes)</code> 获取指定的 Method，参数 name 为要获取的方法名，parameterTypes 为指定方法的参数的 Class，由于可能存在多个同名的重载方法，所以只有提供正确的 parameterTypes 才能准确的获取到指定的 Method</p>
+<p><code>Object invoke(Object obj, Object... args)</code> 执行方法，第一个参数执行该方法的对象，如果是static修饰的类方法，则传null即可；后面是传给该方法执行的具体的参数值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class ClassTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)</span><br><span class="line">            throws ClassNotFoundException, IllegalAccessException, InstantiationException,</span><br><span class="line">            NoSuchFieldException, NoSuchMethodException, InvocationTargetException &#123;</span><br><span class="line">        Class c1 = Class.forName(&quot;reflection.Employee&quot;); // 第1种，forName 方式获取Class对象</span><br><span class="line">        Class c2 = Employee.class; // 第2种，直接通过类获取Class对象</span><br><span class="line">        Employee employee = new Employee(&quot;小明&quot;, &quot;18&quot;, &quot;写代码&quot;, 1, &quot;Java攻城狮&quot;, 100000);</span><br><span class="line">        Class c3 = employee.getClass(); // 第3种，通过调用对象的getClass()方法获取Class对象</span><br><span class="line"></span><br><span class="line">        if (c1 == c2 &amp;&amp; c1 == c3) &#123; // 可以通过 == 比较Class对象是否为同一个对象</span><br><span class="line">            System.out.println(&quot;c1、c2、c3 为同一个对象&quot;);</span><br><span class="line">            System.out.println(c1); // class reflect.Employee</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //获取属性</span><br><span class="line">        System.out.println(c1.getDeclaredField(&quot;empNo&quot;).get(employee));</span><br><span class="line"></span><br><span class="line">        Method method = c2.getDeclaredMethod(&quot;sayHello&quot;);</span><br><span class="line">        method.setAccessible(true);</span><br><span class="line">        //调用方法</span><br><span class="line">        System.out.println(method.invoke(employee));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="反射的优点："><a href="#反射的优点：" class="headerlink" title="反射的优点："></a>反射的优点：</h4><ul>
+<li><p>可扩展性 ：<br>应用程序可以利用全限定名创建可扩展对象的实例，来使用来自外部的用户自定义类。</p>
+</li>
+<li><p>类浏览器和可视化开发环境：<br>一个类浏览器需要可以枚举类的成员。可视化开发环境（如 IDE）可以从利用反射中可用的类型信息中受益，以帮助程序员编写正确的代码。</p>
+</li>
+<li><p>调试器和测试工具 ： 调试器需要能够检查一个类里的私有成员。测试工具可以利用反射来自动地调用类里定义的可被发现的 API 定义，以确保一组测试中有较高的代码覆盖率。</p>
+</li>
+</ul>
+<h4 id="反射的缺点："><a href="#反射的缺点：" class="headerlink" title="反射的缺点："></a>反射的缺点：</h4><p>尽管反射非常强大，但也不能滥用。如果一个功能可以不用反射完成，那么最好就不用。在我们使用反射技术时，下面几条内容应该牢记于心。</p>
+<ul>
+<li><p>性能开销 ：<br>反射涉及了动态类型的解析，所以 JVM 无法对这些代码进行优化。因此，反射操作的效率要比那些非反射操作低得多。我们应该避免在经常被执行的代码或对性能要求很高的程序中使用反射。</p>
+</li>
+<li><p>安全限制 ：<br>使用反射技术要求程序必须在一个没有安全限制的环境中运行。如果一个程序必须在有安全限制的环境中运行，如 Applet，那么这就是个问题了。</p>
+</li>
+<li><p>内部暴露 ：<br>由于反射允许代码执行一些在正常情况下不被允许的操作（比如访问私有的属性和方法），所以使用反射可能会导致意料之外的副作用，这可能导致代码功能失调并破坏可移植性。反射代码破坏了抽象性，因此当平台发生改变的时候，代码的行为就有可能也随着变化。</p>
+</li>
+</ul>
+<p>参考来源:<a href="https://mp.weixin.qq.com/s?__biz=MzI1NDU0MTE1NA==&amp;mid=2247483785&amp;idx=1&amp;sn=f696c8c49cb7ecce9818247683482a1c&amp;chksm=e9c2ed84deb564925172b2dd78d307d4dc345fa313d3e44f01e84fa22ac5561b37aec5cbd5b4&amp;scene=0#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzI1NDU0MTE1NA==&amp;mid=2247483785&amp;idx=1&amp;sn=f696c8c49cb7ecce9818247683482a1c&amp;chksm=e9c2ed84deb564925172b2dd78d307d4dc345fa313d3e44f01e84fa22ac5561b37aec5cbd5b4&amp;scene=0#rd</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>这两个图片是什么?可以扫吗?</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatPay.png" alt="Shen 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/aliPay.png" alt="Shen 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/12/final、finally、finalize各自的用法/" rel="next" title="final、finally、finalize各自的用法">
+                <i class="fa fa-chevron-left"></i> final、finally、finalize各自的用法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/06/14/Java的三种代理模式——静态代理、JDK动态代理和cglib代理/" rel="prev" title="Java的三种代理模式——静态代理、JDK动态代理和cglib代理">
+                Java的三种代理模式——静态代理、JDK动态代理和cglib代理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjA1OS8xODYwNg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/saiki.jpeg" alt="Shen">
+            
+              <p class="site-author-name" itemprop="name">Shen</p>
+              <p class="site-description motion-element" itemprop="description">Penn's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取class对象"><span class="nav-number">1.</span> <span class="nav-text">获取class对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过反射来创建实例"><span class="nav-number">2.</span> <span class="nav-text">通过反射来创建实例</span></a></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#获取类信息的部分API"><span class="nav-number"></span> <span class="nav-text">获取类信息的部分API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行时查看对象数据域实际内容的相关API"><span class="nav-number"></span> <span class="nav-text">运行时查看对象数据域实际内容的相关API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调用任意方法"><span class="nav-number"></span> <span class="nav-text">调用任意方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#调用任意方法相关的API"><span class="nav-number">1.</span> <span class="nav-text">调用任意方法相关的API</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反射的优点："><span class="nav-number"></span> <span class="nav-text">反射的优点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反射的缺点："><span class="nav-number"></span> <span class="nav-text">反射的缺点：</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Gst71Gv0w5HKejm5H7LuG0XI-gzGzoHsz", "aoFAyHFDKihGTWWhHX0p8byC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="项目中加上家园聚会的信鸽推送后,业务逻辑在推送时会有一些卡顿,得优化下图送逻辑. 项目中之前的信鸽推送用的是同步的HttpClient,有一下几个问题:  每次推送都新建一个HttpClient,其实可以用线程安全的client来实现,没必要每次有推送请求的额时候都创建一个对象. 每次推送时,新的httpClient都会与信鸽服务器建立http连接.一次完整的http连接的建立和释放还是有一些耗时">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目中使用CloseableHttpAsyncClient">
+<meta property="og:url" content="http://yoursite.com/2020/06/14/项目中使用CloseableHttpAsyncClient/index.html">
+<meta property="og:site_name" content="Penn">
+<meta property="og:description" content="项目中加上家园聚会的信鸽推送后,业务逻辑在推送时会有一些卡顿,得优化下图送逻辑. 项目中之前的信鸽推送用的是同步的HttpClient,有一下几个问题:  每次推送都新建一个HttpClient,其实可以用线程安全的client来实现,没必要每次有推送请求的额时候都创建一个对象. 每次推送时,新的httpClient都会与信鸽服务器建立http连接.一次完整的http连接的建立和释放还是有一些耗时">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://note.youdao.com/yws/res/5043/21C37324197F4C239D901DEE52E797B4">
+<meta property="og:updated_time" content="2020-06-14T09:09:18.132Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="项目中使用CloseableHttpAsyncClient">
+<meta name="twitter:description" content="项目中加上家园聚会的信鸽推送后,业务逻辑在推送时会有一些卡顿,得优化下图送逻辑. 项目中之前的信鸽推送用的是同步的HttpClient,有一下几个问题:  每次推送都新建一个HttpClient,其实可以用线程安全的client来实现,没必要每次有推送请求的额时候都创建一个对象. 每次推送时,新的httpClient都会与信鸽服务器建立http连接.一次完整的http连接的建立和释放还是有一些耗时">
+<meta name="twitter:image" content="http://note.youdao.com/yws/res/5043/21C37324197F4C239D901DEE52E797B4">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/14/项目中使用CloseableHttpAsyncClient/">
+
+
+
+
+
+  <title>项目中使用CloseableHttpAsyncClient | Penn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Penn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">my blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/14/项目中使用CloseableHttpAsyncClient/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/saiki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Penn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">项目中使用CloseableHttpAsyncClient</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T17:09:18+08:00">
+                2020-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/06/14/项目中使用CloseableHttpAsyncClient/" class="leancloud_visitors" data-flag-title="项目中使用CloseableHttpAsyncClient">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>项目中加上家园聚会的信鸽推送后,业务逻辑在推送时会有一些卡顿,得优化下图送逻辑.</p>
+<p>项目中之前的信鸽推送用的是同步的HttpClient,有一下几个问题:</p>
+<ol>
+<li>每次推送都新建一个HttpClient,其实可以用线程安全的client来实现,没必要每次有推送请求的额时候都创建一个对象.</li>
+<li>每次推送时,新的httpClient都会与信鸽服务器建立http连接.一次完整的http连接的建立和释放还是有一些耗时的,而且这些耗时是没必要的,完全可以复用连接.</li>
+<li>使用的是同步的httpClient,但业务逻辑并不太需要同步的获取结果,只需要在投送后对结果记日志而已,没必要在玩家线程里执行记日志的逻辑,来占用玩家的业务执行时间.</li>
+</ol>
+<p>所以,可以将HttpClilent改成CloseableHttpAsyncClient,异步的执行推送并且处理执行结果.并且将CloseableHttpAsyncClient设为单例的,因为CloseableHttpAsyncClient是线程安全的,所以可以多个线程共享一个client.</p>
+<h5 id="通过源码分析request的处理流程"><a href="#通过源码分析request的处理流程" class="headerlink" title="通过源码分析request的处理流程."></a>通过源码分析request的处理流程.</h5><p>提交请求后,请求会执行到<code>PoolingNHttpClientConnectionManager</code>的<code>requestConnection()</code>方法,<code>requestConnection()</code>会从CPool中获取获取可用连接,或者将请求放入pending队列.大部分流程在<code>CPool</code>的<code>lease</code>方法里:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * @since 4.3</span><br><span class="line">     */</span><br><span class="line">    public Future&lt;E&gt; lease(</span><br><span class="line">            final T route, final Object state,</span><br><span class="line">            final long connectTimeout, final long leaseTimeout, final TimeUnit tunit,</span><br><span class="line">            final FutureCallback&lt;E&gt; callback) &#123;</span><br><span class="line">        Args.notNull(route, &quot;Route&quot;);</span><br><span class="line">        Args.notNull(tunit, &quot;Time unit&quot;);</span><br><span class="line">        Asserts.check(!this.isShutDown.get(), &quot;Connection pool shut down&quot;);</span><br><span class="line">        final BasicFuture&lt;E&gt; future = new BasicFuture&lt;E&gt;(callback);</span><br><span class="line">        //加锁 抢资源的时候就得考虑线程安全的问题了</span><br><span class="line">        this.lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            final long timeout = connectTimeout &gt; 0 ? tunit.toMillis(connectTimeout) : 0;</span><br><span class="line">            final LeaseRequest&lt;T, C, E&gt; request = new LeaseRequest&lt;T, C, E&gt;(route, state, timeout, leaseTimeout, future);</span><br><span class="line">            //这里就是把request提交进去,看能不能找到连接来处理</span><br><span class="line">            final boolean completed = processPendingRequest(request);</span><br><span class="line">            //如果请求没有被处理,则放入leasingRequests中,processPendingRequests()方法会处理这个队列中的请求.</span><br><span class="line">            if (!request.isDone() &amp;&amp; !completed) &#123;</span><br><span class="line">                this.leasingRequests.add(request);</span><br><span class="line">            &#125;</span><br><span class="line">            //请求处理完毕的放入completedRequests中等待触发回调.</span><br><span class="line">            if (request.isDone()) &#123;</span><br><span class="line">                this.completedRequests.add(request);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            this.lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">        //触发已完成请求的回调方法</span><br><span class="line">        fireCallbacks();</span><br><span class="line">        return future;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到,lease()方法已经包含了提交请求、处理请求和触发回调方法这一整套逻辑.现在可以关注下已提交的请求会被怎样处理.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"> private boolean processPendingRequest(final LeaseRequest&lt;T, C, E&gt; request) &#123;</span><br><span class="line">        //获取route,因为连接是按route分配的</span><br><span class="line">        final T route = request.getRoute();</span><br><span class="line">        final Object state = request.getState();</span><br><span class="line">        //获取请求的超时时间</span><br><span class="line">        final long deadline = request.getDeadline();</span><br><span class="line">        //超时请求触发failed回调</span><br><span class="line">        final long now = System.currentTimeMillis();</span><br><span class="line">        if (now &gt; deadline) &#123;</span><br><span class="line">            request.failed(new TimeoutException());</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        //根据route回去对应的池子</span><br><span class="line">        final RouteSpecificPool&lt;T, C, E&gt; pool = getPool(route);</span><br><span class="line">        E entry;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">        //从avaliable中获取空闲的连接,获取到了则将连接取出,并加入到leased中</span><br><span class="line">            entry = pool.getFree(state);</span><br><span class="line">            //没有空闲连接,则执行后续逻辑</span><br><span class="line">            if (entry == null) &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">            //获取到的连接是关闭的或者超时的,则移除连接.</span><br><span class="line">            if (entry.isClosed() || entry.isExpired(System.currentTimeMillis())) &#123;</span><br><span class="line">                entry.close();</span><br><span class="line">                this.available.remove(entry);</span><br><span class="line">                pool.free(entry, false);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        //获取到了连接后,将任务和连接绑定,从available中移除连接,并放入leased中表示正在使用中</span><br><span class="line">        if (entry != null) &#123;</span><br><span class="line">            this.available.remove(entry);</span><br><span class="line">            this.leased.add(entry);</span><br><span class="line">            request.completed(entry);</span><br><span class="line">            onReuse(entry);</span><br><span class="line">            onLease(entry);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">//获取不到可用连接的话,需要创建新连接,先移除多余的连接</span><br><span class="line">        // New connection is needed</span><br><span class="line">        final int maxPerRoute = getMax(route);</span><br><span class="line">        // Shrink the pool prior to allocating a new connection</span><br><span class="line">        final int excess = Math.max(0, pool.getAllocatedCount() + 1 - maxPerRoute);</span><br><span class="line">        if (excess &gt; 0) &#123;</span><br><span class="line">            for (int i = 0; i &lt; excess; i++) &#123;</span><br><span class="line">                final E lastUsed = pool.getLastUsed();</span><br><span class="line">                if (lastUsed == null) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                lastUsed.close();</span><br><span class="line">                this.available.remove(lastUsed);</span><br><span class="line">                pool.remove(lastUsed);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">//如果连接没有到达上线,则异步创建新的连接</span><br><span class="line">        if (pool.getAllocatedCount() &lt; maxPerRoute) &#123;</span><br><span class="line">            final int totalUsed = this.pending.size() + this.leased.size();</span><br><span class="line">            final int freeCapacity = Math.max(this.maxTotal - totalUsed, 0);</span><br><span class="line">            if (freeCapacity == 0) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">            final int totalAvailable = this.available.size();</span><br><span class="line">            if (totalAvailable &gt; freeCapacity - 1) &#123;</span><br><span class="line">                if (!this.available.isEmpty()) &#123;</span><br><span class="line">                    final E lastUsed = this.available.removeLast();</span><br><span class="line">                    lastUsed.close();</span><br><span class="line">                    final RouteSpecificPool&lt;T, C, E&gt; otherpool = getPool(lastUsed.getRoute());</span><br><span class="line">                    otherpool.remove(lastUsed);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            final SocketAddress localAddress;</span><br><span class="line">            final SocketAddress remoteAddress;</span><br><span class="line">            try &#123;</span><br><span class="line">                remoteAddress = this.addressResolver.resolveRemoteAddress(route);</span><br><span class="line">                localAddress = this.addressResolver.resolveLocalAddress(route);</span><br><span class="line">            &#125; catch (final IOException ex) &#123;</span><br><span class="line">                request.failed(ex);</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            final SessionRequest sessionRequest = this.ioreactor.connect(</span><br><span class="line">                    remoteAddress, localAddress, route, this.sessionRequestCallback);</span><br><span class="line">            final int timout = request.getConnectTimeout() &lt; Integer.MAX_VALUE ?</span><br><span class="line">                    (int) request.getConnectTimeout() : Integer.MAX_VALUE;</span><br><span class="line">            sessionRequest.setConnectTimeout(timout);</span><br><span class="line">            this.pending.add(sessionRequest);</span><br><span class="line">            pool.addPending(sessionRequest, request.getFuture());</span><br><span class="line">            return true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://note.youdao.com/yws/res/5043/21C37324197F4C239D901DEE52E797B4" alt="image"></p>
+<p>所以,请求分配连接的过程就是:</p>
+<ol>
+<li>根据route去routeToPool中过去对应的可用连接,获取到了则将连接从avaliable中移除,并添加到leased中.没有获取到则进入下一步</li>
+<li>如果当前route和整个pool的连接都没有达到上限,则异步的建立新的连接,并且将当前任务的future放入池子的<code>pending</code>中异步处理<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pool.addPending(sessionRequest, request.getFuture());</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="一些超时参数"><a href="#一些超时参数" class="headerlink" title="一些超时参数"></a>一些超时参数</h5><ol>
+<li>connectTimeout  –  连接超时时间</li>
+</ol>
+<p>根据网络情况，内网、外网等，可设置连接超时时间为2秒，具体根据业务调整</p>
+<ol start="2">
+<li>socketTimeout  –  读超时时间（等待数据超时时间）</li>
+</ol>
+<p>需要根据具体请求的业务而定，如请求的API接口从接到请求到返回数据的平均处理时间为1秒，那么读超时时间可以设置为2秒，考虑并发量较大的情况，也可以通过性能测试得到一个相对靠谱的值。<br>socketTimeout有默认值，也可以针对每个请求单独设置。</p>
+<ol start="3">
+<li>connectionRequestTimeout  –  从池中获取连接超时时间</li>
+</ol>
+<p>建议设置500ms即可，不要设置太大，这样可以使连接池连接不够时不用等待太久去获取连接，不要让大量请求堆积在获取连接处，尽快抛出异常，发现问题</p>
+<p>参考链接:<a href="https://www.cnblogs.com/trust-freedom/p/6349502.html" target="_blank" rel="noopener">https://www.cnblogs.com/trust-freedom/p/6349502.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>这两个图片是什么?可以扫吗?</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatPay.png" alt="Shen 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/aliPay.png" alt="Shen 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/14/帧同步与状态同步/" rel="next" title="帧同步与状态同步">
+                <i class="fa fa-chevron-left"></i> 帧同步与状态同步
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/06/14/git的rebase的使用/" rel="prev" title="git rebase的使用">
+                git rebase的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjA1OS8xODYwNg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/saiki.jpeg" alt="Shen">
+            
+              <p class="site-author-name" itemprop="name">Shen</p>
+              <p class="site-description motion-element" itemprop="description">Penn's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#通过源码分析request的处理流程"><span class="nav-number">1.</span> <span class="nav-text">通过源码分析request的处理流程.</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#一些超时参数"><span class="nav-number">2.</span> <span class="nav-text">一些超时参数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Gst71Gv0w5HKejm5H7LuG0XI-gzGzoHsz", "aoFAyHFDKihGTWWhHX0p8byC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -3,7 +3,7 @@ title: MongoDB 聚合(二) MpaReduce
 categories :
 - 技术
 tags :
-- Mongo
+- MongoDB
 ---
 
 (可参考:http://www.runoob.com/mongodb/mongodb-map-reduce.html)
