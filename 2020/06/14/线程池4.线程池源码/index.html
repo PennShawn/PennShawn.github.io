@@ -82,14 +82,14 @@
 <meta name="description" content="JDK中线程池的核心实现类是ThreadPoolExecutor，先看这个类的第一个成员变量ctl，AtomicInteger这个类可以通过CAS达到无锁并发，效率比较高，这个变量有双重身份，它的高三位表示线程池的状态，低29位表示线程池中现有的线程数，这也是Doug Lea一个天才的设计，用最少的变量来减少锁竞争，提高并发效率。 123456789101112131415161718192021">
 <meta name="keywords" content="Java,源码,多线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM和垃圾回收">
+<meta property="og:title" content="线程池4.线程池源码">
 <meta property="og:url" content="http://yoursite.com/2020/06/14/线程池4.线程池源码/index.html">
 <meta property="og:site_name" content="Penn">
 <meta property="og:description" content="JDK中线程池的核心实现类是ThreadPoolExecutor，先看这个类的第一个成员变量ctl，AtomicInteger这个类可以通过CAS达到无锁并发，效率比较高，这个变量有双重身份，它的高三位表示线程池的状态，低29位表示线程池中现有的线程数，这也是Doug Lea一个天才的设计，用最少的变量来减少锁竞争，提高并发效率。 123456789101112131415161718192021">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-06-14T07:46:11.607Z">
+<meta property="og:updated_time" content="2020-06-14T07:52:57.667Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM和垃圾回收">
+<meta name="twitter:title" content="线程池4.线程池源码">
 <meta name="twitter:description" content="JDK中线程池的核心实现类是ThreadPoolExecutor，先看这个类的第一个成员变量ctl，AtomicInteger这个类可以通过CAS达到无锁并发，效率比较高，这个变量有双重身份，它的高三位表示线程池的状态，低29位表示线程池中现有的线程数，这也是Doug Lea一个天才的设计，用最少的变量来减少锁竞争，提高并发效率。 123456789101112131415161718192021">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <title>JVM和垃圾回收 | Penn</title>
+  <title>线程池4.线程池源码 | Penn</title>
   
 
 
@@ -310,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">JVM和垃圾回收</h1>
+          <h1 class="post-title" itemprop="name headline">线程池4.线程池源码</h1>
         
 
         <div class="post-meta">
@@ -322,7 +322,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T15:46:11+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T15:52:57+08:00">
                 2020-06-14
               </time>
             
@@ -362,7 +362,7 @@
 
           
           
-             <span id="/2020/06/14/线程池4.线程池源码/" class="leancloud_visitors" data-flag-title="JVM和垃圾回收">
+             <span id="/2020/06/14/线程池4.线程池源码/" class="leancloud_visitors" data-flag-title="线程池4.线程池源码">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -483,8 +483,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/06/14/java的类加载过程/" rel="next" title="JVM和垃圾回收">
-                <i class="fa fa-chevron-left"></i> JVM和垃圾回收
+              <a href="/2020/06/14/synchronized/" rel="next" title="synchronized">
+                <i class="fa fa-chevron-left"></i> synchronized
               </a>
             
           </div>
@@ -493,8 +493,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/06/14/JVM的一些命令/" rel="prev" title="JVM的一些命令">
-                JVM的一些命令 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/06/14/redis分布式锁的用法/" rel="prev" title="redis分布式锁的用法">
+                redis分布式锁的用法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -581,7 +581,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-count">116</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -603,7 +603,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
