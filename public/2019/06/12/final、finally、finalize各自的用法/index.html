@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Java,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
-<meta name="keywords" content="keywords">
+<meta name="description" content="首先, final、finally、finalize这三者出了名字相似,没有太多联系. finallyfinally 则是 Java 保证重点代码一定要被执行的一种机制,我们可以使用 try-finally 或者 catch-finally 来进行类似关闭 JDBC 连接、保证 unlock 锁等动作。对于需要关闭的连接等资源,如果其实现了AutoCloseable接口,就可以用try-with-">
+<meta name="keywords" content="Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2019/05/28/hello-world/index.html">
+<meta property="og:title" content="final、finally、finalize各自的用法">
+<meta property="og:url" content="http://yoursite.com/2019/06/12/final、finally、finalize各自的用法/index.html">
 <meta property="og:site_name" content="Penn">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="首先, final、finally、finalize这三者出了名字相似,没有太多联系. finallyfinally 则是 Java 保证重点代码一定要被执行的一种机制,我们可以使用 try-finally 或者 catch-finally 来进行类似关闭 JDBC 连接、保证 unlock 锁等动作。对于需要关闭的连接等资源,如果其实现了AutoCloseable接口,就可以用try-with-">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-28T03:57:49.275Z">
+<meta property="og:updated_time" content="2019-06-12T13:00:48.852Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="final、finally、finalize各自的用法">
+<meta name="twitter:description" content="首先, final、finally、finalize这三者出了名字相似,没有太多联系. finallyfinally 则是 Java 保证重点代码一定要被执行的一种机制,我们可以使用 try-finally 或者 catch-finally 来进行类似关闭 JDBC 连接、保证 unlock 锁等动作。对于需要关闭的连接等资源,如果其实现了AutoCloseable接口,就可以用try-with-">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/05/28/hello-world/">
+  <link rel="canonical" href="http://yoursite.com/2019/06/12/final、finally、finalize各自的用法/">
 
 
 
 
 
-  <title>Hello World | Penn</title>
+  <title>final、finally、finalize各自的用法 | Penn</title>
   
 
 
@@ -293,7 +293,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/28/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/12/final、finally、finalize各自的用法/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Shen">
@@ -310,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Hello World</h1>
+          <h1 class="post-title" itemprop="name headline">final、finally、finalize各自的用法</h1>
         
 
         <div class="post-meta">
@@ -322,8 +322,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-28T11:57:49+08:00">
-                2019-05-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-12T21:00:48+08:00">
+                2019-06-12
               </time>
             
 
@@ -333,6 +333,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -340,7 +362,7 @@
 
           
           
-             <span id="/2019/05/28/hello-world/" class="leancloud_visitors" data-flag-title="Hello World">
+             <span id="/2019/06/12/final、finally、finalize各自的用法/" class="leancloud_visitors" data-flag-title="final、finally、finalize各自的用法">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -371,15 +393,22 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>首先, final、finally、finalize这三者出了名字相似,没有太多联系.</p>
+<h4 id="finally"><a href="#finally" class="headerlink" title="finally"></a>finally</h4><p>finally 则是 Java 保证重点代码一定要被执行的一种机制,我们可以使用 try-finally 或者 catch-finally 来进行类似关闭 JDBC 连接、保证 unlock 锁等动作。<br><br>对于需要关闭的连接等资源,如果其实现了<code>AutoCloseable</code>接口,就可以用try-with-source优雅的关闭资源.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">  // do something</span><br><span class="line">  System.exit(1);</span><br><span class="line">&#125; finally&#123;</span><br><span class="line">  System.out.println(“Print from finally”);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>是个特例,finally里面的语句不会被执行.</p>
+<h4 id="finalize"><a href="#finalize" class="headerlink" title="finalize"></a>finalize</h4><p>finalize 是一个不推荐使用的方法,在Java9中,已经被标记为标记为<code>deprecated</code>.因为你无法保证 finalize什么时候执行，执行的是否符合预期。使用不当会影响性能，导致程序死锁、挂起等。</p>
+<h4 id="final"><a href="#final" class="headerlink" title="final"></a>final</h4><p>final可以用来修饰类,方法,变量,分别有不同的意义.final修饰的类是不可继承的,final修饰的方法是不可重写的,final修饰的变量是不可修改的.<br><br>final修饰的属性的初始化可以在编译期，也可以在运行期，初始化后不能被改变。对于基本类型数据，final会将值变为一个常数（创建后不能被修改）；但是对于对象句柄（亦可称作引用或者指针），final会将句柄变为一个常数（进行声明时，必须将句柄初始化到一个具体的对象。而且不能再将句柄指向另一个对象。因此final修饰的变量,基本数据类型不可变的是其内容，而引用数据类型不可变的是其引用,引用变量本身的行为不受final约束.<br>例如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">final List&lt;String&gt; strList = new ArrayList&lt;&gt;();</span><br><span class="line">strList.add(&quot;Hello&quot;);</span><br><span class="line">strList.add(&quot;world&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>是没有问题的.而如果修改<code>strList</code>的引用,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strList = new ArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure></p>
+<p>编译器会报错.<br><br>如果需要对对象的行为进行约束,可以构造一个<code>Immutable</code>变量.guava中<code>ImmutableList、ImmutableMap</code>等得到的变量是<code>Immutable</code>的,对象的行为也会收到约束.如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ImmutableList&lt;String&gt; immutableList = ImmutableList.of(&quot;a&quot;, &quot;b&quot;);</span><br><span class="line">ImmutableList&lt;String&gt; immutableList2 = ImmutableList.&lt;String&gt; builder().add(&quot;1&quot;).add(&quot;2&quot;)</span><br><span class="line">        .build();</span><br><span class="line">immutableList.add(&quot;s&quot;);//java.lang.UnsupportedOperationException</span><br><span class="line">immutableList2.add(&quot;s&quot;);//java.lang.UnsupportedOperationException</span><br></pre></td></tr></table></figure></p>
+<p>对象构建完成之后,再改变的时候会抛<code>java.lang.UnsupportedOperationException</code>异常.<br></p>
+<ul>
+<li>如果要实现 immutable 的类，我们需要做到： 将class自身设为final</li>
+<li>所有成员变量定义为private final 并且不要实现setter</li>
+<li>通常构造对象时，成员变量使用深度拷贝来初始化，而不是直接赋值。防止他输入对象被他人更改</li>
+<li>如果确实需要实现geter方法，或者其他返回内部状态的方法，使用copy-on-write原则,创建私有的copy.</li>
+</ul>
+<h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><p>static可以修饰：属性，方法，代码段，内部类（静态内部类或嵌套内部类).<br>static修饰的属性的初始化在编译期（类加载的时候），初始化后能改变.<br><br>被static修饰的成员变量或成员方法独立于该类的任何对象,也就是说,他不依赖于特定的实例,只要这个类被加载,Java虚拟机就可以根据类名在运行时数据区的方法区内找到他们.</p>
+<p>参考:<a href="https://time.geekbang.org/column/article/6906" target="_blank" rel="noopener">https://time.geekbang.org/column/article/6906</a><br>     <a href="https://www.jianshu.com/p/3e9811667132" target="_blank" rel="noopener">https://www.jianshu.com/p/3e9811667132</a></p>
 
       
     </div>
@@ -424,6 +453,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
 
       
       
@@ -433,8 +468,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/28/idea方法模板,显示参数和返回值类型/" rel="next" title="idea方法模板,显示参数和返回值类型">
-                <i class="fa fa-chevron-left"></i> idea方法模板,显示参数和返回值类型
+              <a href="/2019/06/06/数据库事务特性、隔离级别、脏数据等/" rel="next" title="数据库事务特性、隔离级别、脏数据等">
+                <i class="fa fa-chevron-left"></i> 数据库事务特性、隔离级别、脏数据等
               </a>
             
           </div>
@@ -442,10 +477,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/28/jinja配置文件渲染模板/" rel="prev" title="jinja 配置文件渲染模板">
-                jinja 配置文件渲染模板 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -586,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#finally"><span class="nav-number">1.</span> <span class="nav-text">finally</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#finalize"><span class="nav-number">2.</span> <span class="nav-text">finalize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#final"><span class="nav-number">3.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#static"><span class="nav-number">4.</span> <span class="nav-text">static</span></a></li></ol></div>
             
 
           </div>
