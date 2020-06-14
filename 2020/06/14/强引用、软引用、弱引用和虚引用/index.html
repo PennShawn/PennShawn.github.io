@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/saiki.jpeg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="强引用强引用是最常见的引用方式.对于Object obj = ew Object()这里obj所持有的就是强引用,jvm判断一个对象需不需要回收就是判断有没有指向它的引用,当强引用过多,内存空间不足时,jvm就会跑出oom错误. 软引用软引用是用来描述一些非必须但是仍有用的对象,当jvm内存足够的时候,软引用的对象不会被回收,只有在内存不足的时候,才会回收软引用的对象. JVM分配内存空间时,会先">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强引用、软引用、弱引用和虚引用">
+<meta property="og:url" content="http://yoursite.com/2020/06/14/强引用、软引用、弱引用和虚引用/index.html">
+<meta property="og:site_name" content="Penn">
+<meta property="og:description" content="强引用强引用是最常见的引用方式.对于Object obj = ew Object()这里obj所持有的就是强引用,jvm判断一个对象需不需要回收就是判断有没有指向它的引用,当强引用过多,内存空间不足时,jvm就会跑出oom错误. 软引用软引用是用来描述一些非必须但是仍有用的对象,当jvm内存足够的时候,软引用的对象不会被回收,只有在内存不足的时候,才会回收软引用的对象. JVM分配内存空间时,会先">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-06-14T07:40:48.321Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="强引用、软引用、弱引用和虚引用">
+<meta name="twitter:description" content="强引用强引用是最常见的引用方式.对于Object obj = ew Object()这里obj所持有的就是强引用,jvm判断一个对象需不需要回收就是判断有没有指向它的引用,当强引用过多,内存空间不足时,jvm就会跑出oom错误. 软引用软引用是用来描述一些非必须但是仍有用的对象,当jvm内存足够的时候,软引用的对象不会被回收,只有在内存不足的时候,才会回收软引用的对象. JVM分配内存空间时,会先">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/14/强引用、软引用、弱引用和虚引用/">
+
+
+
+
+
+  <title>强引用、软引用、弱引用和虚引用 | Penn</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Penn</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">my blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/14/强引用、软引用、弱引用和虚引用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/saiki.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Penn">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">强引用、软引用、弱引用和虚引用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T15:40:48+08:00">
+                2020-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/06/14/强引用、软引用、弱引用和虚引用/" class="leancloud_visitors" data-flag-title="强引用、软引用、弱引用和虚引用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h4><p>强引用是最常见的引用方式.对于<code>Object obj = ew Object()</code>这里obj所持有的就是强引用,jvm判断一个对象需不需要回收就是判断有没有指向它的引用,当强引用过多,内存空间不足时,jvm就会跑出oom错误.</p>
+<h4 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h4><p>软引用是用来描述一些非必须但是仍有用的对象,当jvm内存足够的时候,软引用的对象不会被回收,只有在内存不足的时候,才会回收软引用的对象.</p>
+<p>JVM分配内存空间时,会先判断内存空间是否足够,不够的话进行GC,GC后还不够的话,会再进行一次GC将,这时才会将软引用移除.所有软引用并不是GC的时候一定会被移除的.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">https://www.jianshu.com/p/825cca41d962</span><br><span class="line">/**</span><br><span class="line"> * 软引用何时被收集</span><br><span class="line"> * 运行参数 -Xmx200m -XX:+PrintGC</span><br><span class="line"> * Created by ccr at 2018/7/14.</span><br><span class="line"> */</span><br><span class="line">public class SoftReferenceDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        //100M的缓存数据</span><br><span class="line">        byte[] cacheData = new byte[100 * 1024 * 1024];</span><br><span class="line">        //将缓存数据用软引用持有</span><br><span class="line">        SoftReference&lt;byte[]&gt; cacheRef = new SoftReference&lt;&gt;(cacheData);</span><br><span class="line">        //将缓存数据的强引用去除</span><br><span class="line">        cacheData = null;</span><br><span class="line">        System.out.println(&quot;第一次GC前&quot; + cacheData);</span><br><span class="line">        System.out.println(&quot;第一次GC前&quot; + cacheRef.get());</span><br><span class="line">        //进行一次GC后查看对象的回收情况</span><br><span class="line">        System.gc();</span><br><span class="line">        //等待GC</span><br><span class="line">        Thread.sleep(500);</span><br><span class="line">        System.out.println(&quot;第一次GC后&quot; + cacheData);</span><br><span class="line">        System.out.println(&quot;第一次GC后&quot; + cacheRef.get());</span><br><span class="line"></span><br><span class="line">        //在分配一个120M的对象，看看缓存对象的回收情况</span><br><span class="line">        byte[] newData = new byte[120 * 1024 * 1024];</span><br><span class="line">        System.out.println(&quot;分配后&quot; + cacheData);</span><br><span class="line">        System.out.println(&quot;分配后&quot; + cacheRef.get());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">第一次GC前null</span><br><span class="line">第一次GC前[B@7d4991ad</span><br><span class="line">[GC (System.gc())  105728K-&gt;103248K(175104K), 0.0009623 secs]</span><br><span class="line">[Full GC (System.gc())  103248K-&gt;103139K(175104K), 0.0049909 secs]</span><br><span class="line">第一次GC后null</span><br><span class="line">第一次GC后[B@7d4991ad</span><br><span class="line">[GC (Allocation Failure)  103805K-&gt;103171K(175104K), 0.0027889 secs]</span><br><span class="line">[GC (Allocation Failure)  103171K-&gt;103171K(175104K), 0.0016018 secs]</span><br><span class="line">[Full GC (Allocation Failure)  103171K-&gt;103136K(175104K), 0.0089988 secs]</span><br><span class="line">[GC (Allocation Failure)  103136K-&gt;103136K(199680K), 0.0009408 secs]</span><br><span class="line">[Full GC (Allocation Failure)  103136K-&gt;719K(128512K), 0.0082685 secs]</span><br><span class="line">分配后null</span><br><span class="line">分配后null</span><br></pre></td></tr></table></figure></p>
+<p>这种特性就可以用来做缓存,因为缓存的存在是为了减少对数据库的查询,所以我们可以将查询到的数据存储在缓存中,但是,不能因为缓存数据太多导致OOM,这就得不偿失了.这时候就可以用软引用将数据缓存起来,内存实在是不够的时候就可以清理一批缓存了.</p>
+<h4 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h4><p>弱引用是用来描述非必须对象的,它的强度比软引用更弱一点,只要进行垃圾回收时,一个对象只被弱引用了,没有任何强引用或者软引用,那么这个对象就会被回收.<br>弱引用的使用场景:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">static Map&lt;Object,Object&gt; container = new HashMap&lt;&gt;();</span><br><span class="line">public static void putToContainer(Object key,Object value)&#123;</span><br><span class="line">    container.put(key,value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    //某个类中有这样一段代码</span><br><span class="line">    Object key = new Object();</span><br><span class="line">    Object value = new Object();</span><br><span class="line">    putToContainer(key,value);</span><br><span class="line"></span><br><span class="line">    //..........</span><br><span class="line">    /**</span><br><span class="line">     * 若干调用层次后程序员发现这个key指向的对象没有用了，</span><br><span class="line">     * 为了节省内存打算把这个对象抛弃，然而下面这个方式真的能把对象回收掉吗？</span><br><span class="line">     * 由于container对象中包含了这个对象的引用,所以这个对象不能按照程序员的意向进行回收.</span><br><span class="line">     * 并且由于在程序中的任何部分没有再出现这个键，所以，这个键 / 值 对无法从映射中删除。</span><br><span class="line">     * 很可能会造成内存泄漏。</span><br><span class="line">     */</span><br><span class="line">    key = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种情况下就可以使用<code>WeakHashMap</code>来保存储存对象,如果一个对象只由WeakHashMap引用,找不到其他强一点的引用了,那么这个对象就会被放入等待垃圾回收的队列中.</p>
+<p>我们项目中,由于Mina框架的问题,出现过内存泄漏的问题,玩家由于一些异常情况下线时,ioSession没有正确的被释放掉.mina在要移除一个session时,不是立刻移除,而是放在一个removingSessions容器中,然后Processor的run方法中会遍历这个容器,判断遍历到的容器的状态,如果session状态是closing则跳过移除.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * &#123;@inheritDoc&#125;</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public final void remove(S session) &#123;</span><br><span class="line">        scheduleRemove(session);</span><br><span class="line">        startupProcessor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void scheduleRemove(S session) &#123;</span><br><span class="line">        if (!removingSessions.contains(session)) &#123;</span><br><span class="line">            removingSessions.add(session);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">//在Processor的run方法中调用</span><br><span class="line">  private int removeSessions() &#123;</span><br><span class="line">            int removedSessions = 0;</span><br><span class="line"></span><br><span class="line">            for (S session = removingSessions.poll(); session != null; session = removingSessions.poll()) &#123;</span><br><span class="line">                SessionState state = getState(session);</span><br><span class="line"></span><br><span class="line">                // Now deal with the removal accordingly to the session&apos;s state</span><br><span class="line">                switch (state) &#123;</span><br><span class="line">                case OPENED:</span><br><span class="line">                    // Try to remove this session</span><br><span class="line">                    if (removeNow(session)) &#123;</span><br><span class="line">                        removedSessions++;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    break;</span><br><span class="line"></span><br><span class="line">                case CLOSING:</span><br><span class="line">                    // Skip if channel is already closed</span><br><span class="line">                    // In any case, remove the session from the queue</span><br><span class="line">                    removedSessions++;</span><br><span class="line">                    break;</span><br><span class="line"></span><br><span class="line">                case OPENING:</span><br><span class="line">                    // Remove session from the newSessions queue and</span><br><span class="line">                    // remove it</span><br><span class="line">                    newSessions.remove(session);</span><br><span class="line"></span><br><span class="line">                    if (removeNow(session)) &#123;</span><br><span class="line">                        removedSessions++;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    break;</span><br><span class="line"></span><br><span class="line">                default:</span><br><span class="line">                    throw new IllegalStateException(String.valueOf(state));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            return removedSessions;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>WriteBuffer时产生异常会调用destroy方法,造成session状态是closing,导致removingSessions中的session没有被移除,越堆越多.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">                    localWrittenBytes = write(session, buf, length);</span><br><span class="line">                &#125; catch (IOException ioe) &#123;</span><br><span class="line">                    ioe.printStackTrace();</span><br><span class="line"></span><br><span class="line">                    // We have had an issue while trying to send data to the</span><br><span class="line">                    // peer : let&apos;s close the session.</span><br><span class="line">                    buf.free();</span><br><span class="line">                    session.closeNow();</span><br><span class="line">                    destroy(session);</span><br><span class="line"></span><br><span class="line">                    return 0;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure></p>
+<p>解决方法是提升mina版本,mina已经修复了这个问题,异常时调用的是removeNow方法直接移除而不是destroy了,解决了内存泄漏的问题.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">                    localWrittenBytes = write(session, buf, length);</span><br><span class="line">                &#125; catch (IOException ioe) &#123;</span><br><span class="line">                    ioe.printStackTrace();</span><br><span class="line"></span><br><span class="line">                    // We have had an issue while trying to send data to the</span><br><span class="line">                    // peer : let&apos;s close the session.</span><br><span class="line">                    buf.free();</span><br><span class="line">                    session.closeNow();</span><br><span class="line">                    this.removeNow(session);</span><br><span class="line"></span><br><span class="line">                    return 0;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是,为了方便以后问题排查,可以把playersession保存在WeakHashMap中,如果正常移除最好,但是如果还有内存泄漏,那么就可以在WeakHashMap中找到palyerSession对象查看它的状态了.<a href="https://gitlabdoc.playcrab.com/kosserver/share/wikis/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F" target="_blank" rel="noopener">https://gitlabdoc.playcrab.com/kosserver/share/wikis/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F</a></p>
+<h4 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h4><p>虚引用和软引用、弱引用不同,它不影响对象的生命周期,一个兑现如果只有虚引用,那和没有被引用一样,任何时候都有可能被回收.虚引用必须搭配<code>ReferenceQueue</code>使用.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class PhantomReference&lt;T&gt; extends Reference&lt;T&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     * Returns this reference object&apos;s referent.  Because the referent of a</span><br><span class="line">     * phantom reference is always inaccessible, this method always returns</span><br><span class="line">     * &lt;code&gt;null&lt;/code&gt;.</span><br><span class="line">     *</span><br><span class="line">     * @return  &lt;code&gt;null&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    public T get() &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    public PhantomReference(T referent, ReferenceQueue&lt;? super T&gt; q) &#123;</span><br><span class="line">        super(referent, q);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>jdk中直接内存的回收就用到虚引用，由于jvm自动内存管理的范围是堆内存，而直接内存是在堆内存之外（其实是内存映射文件，自行去理解虚拟内存空间的相关概念），所以直接内存的分配和回收都是有Unsafe类去操作，java在申请一块直接内存之后，会在堆内存分配一个对象保存这个堆外内存的引用，这个对象被垃圾收集器管理，一旦这个对象被回收，相应的用户线程会收到通知并对直接内存进行清理工作。</p>
+<h5 id="引用队列"><a href="#引用队列" class="headerlink" title="引用队列"></a>引用队列</h5><p>软引用、弱引用和虚引用都可以搭配引用队列ReferenceQueue一起使用.当JVM将要会后一个对象时,就会将对应的这些引用加入到与之关联的引用队列中,程序就可以通过引用队列中有没有该对象的引用,来判断该对象是否将要被回收.</p>
+<p><a href="https://www.cnblogs.com/liyutian/p/9690974.html" target="_blank" rel="noopener">https://www.cnblogs.com/liyutian/p/9690974.html</a><br><a href="https://www.jianshu.com/p/825cca41d962" target="_blank" rel="noopener">https://www.jianshu.com/p/825cca41d962</a><br><a href="https://blog.csdn.net/linzhiqiang0316/article/details/88591907" target="_blank" rel="noopener">https://blog.csdn.net/linzhiqiang0316/article/details/88591907</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>这两个图片是什么?可以扫吗?</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatPay.png" alt="Shen 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/aliPay.png" alt="Shen 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/14/clone/" rel="next" title="clone">
+                <i class="fa fa-chevron-left"></i> clone
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MjA1OS8xODYwNg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/saiki.jpeg" alt="Shen">
+            
+              <p class="site-author-name" itemprop="name">Shen</p>
+              <p class="site-description motion-element" itemprop="description">Penn's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#强引用"><span class="nav-number">1.</span> <span class="nav-text">强引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软引用"><span class="nav-number">2.</span> <span class="nav-text">软引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#弱引用"><span class="nav-number">3.</span> <span class="nav-text">弱引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚引用"><span class="nav-number">4.</span> <span class="nav-text">虚引用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#引用队列"><span class="nav-number">4.1.</span> <span class="nav-text">引用队列</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("Gst71Gv0w5HKejm5H7LuG0XI-gzGzoHsz", "aoFAyHFDKihGTWWhHX0p8byC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
