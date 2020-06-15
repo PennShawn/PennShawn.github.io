@@ -1,0 +1,40 @@
+---
+title: errlog脚本快捷查看错误日志
+categories: 
+ - 技术
+tags:
+ - Java
+ - linux
+---
+
+errlog脚本内容如下:
+```
+if [ ! -n "$1" ] ;then
+    echo "输入错误，必须指定区服!!"
+    exit
+fi
+d={`ps aux | grep "server.id=$1 "`}
+
+d=${d#*log.home=}
+
+logpath=`echo $d|/bin/awk  '{print $1}'`
+
+tail -200f $logpath/java-error-$1.log
+```
+
+1. 首先是获取区服参数`-$1`
+2. 然后根据区服参数ps查询到进程信息.
+```
+[*@localhost ~]$ ps aux |grep "server.id=201"
+* 10495  5.9  2.3 15462600 1530848 ?    Sl   14:38   4:11 /data/home/user00/*****/usr/jdk/bin/java -Dserver.id=201 -Dserver.type=GS -Dserver.home=/data/home/user00/****/kos/version/backend/dt_dev_sea201 -Dlog.home=/data/home/user00/log/business/gameserver -Dplatform=pmdev -Dcsp.sentinel.dashboard.server=*.*.*.*:* -Dproject.name=pmdev -Xmx1024m -Xms1024m -XX:+UseG1GC -Dsun.zip.disableMemoryMapping=true -Dfile.encoding=UTF-8 -javaagent:/data/home/user00/kos/backend/bin/chr.jar -DClassHotReloadJarPath=/data/home/user00/*/kos/version/backend/dt_dev_sea201/reload.conf -DClassHotReloadLogDir=/data/home/user00/log/business/gameserver/reload/ -Djava.security.egd=file:/dev/./urandom -Ddebug=1 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/home/user00/log/business/gameserver/jvm_heap_201.log -Xloggc:/data/home/user00/log/business/gameserver/heap_trace_201.log -XX:+PrintGC -XX:+PrintGCDateStamps -Dcom.sun.management.jmxremote.port=* -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=*.*.*.* -Dcom.sun.management.jmxremote.port=* -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=*.*.*.* -cp /data/home/user00/*/kos/version/backend/dt_dev_sea201/lib/:/data/home/user00/*/kos/version/backend/*/lib/*:/data/home/user00/*/kos/version/backend/*/kos.jar com.*.kos.common.*
+```
+3. 之后裁减掉`log.home=`前的字段,得到字符串`=/data/home/user00/log/business/gameserver -Dplatform=pmdev -Dcsp.sentinel.dashboard.server=*.*.*.*:* -Dproject.name=pmdev -Xmx1024m -Xms1024m -XX:+UseG1GC -Dsun.zip.disableMemoryMapping=true -Dfile.encoding=UTF-8 -javaagent:/data/home/user00/kos/backend/bin/chr.jar -DClassHotReloadJarPath=/data/home/user00/*/kos/version/backend/dt_dev_sea201/reload.conf -DClassHotReloadLogDir=/data/home/user00/log/business/gameserver/reload/ -Djava.security.egd=file:/dev/./urandom -Ddebug=1 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/home/user00/log/business/gameserver/jvm_heap_201.log -Xloggc:/data/home/user00/log/business/gameserver/heap_trace_201.log -XX:+PrintGC -XX:+PrintGCDateStamps -Dcom.sun.management.jmxremote.port=* -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=*.*.*.* -Dcom.sun.management.jmxremote.port=* -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=*.*.*.* -cp /data/home/user00/*/kos/version/backend/dt_dev_sea201/lib/:/data/home/user00/*/kos/version/backend/*/lib/*:/data/home/user00/*/kos/version/backend/*/kos.jar com.*.kos.common.*`
+4. 对上一步的字符串进行awk,获取到第一段的日志地址`/data/home/user00/log/business/gameserver`
+5. 拼接地址和区服等信息,查询日志
+```
+tail -200f $logpath/java-error-$1.log
+```
+6. 设置别名,之后每次查询时直接输入`errlog 区服ID`
+```
+`alias errlog="~/*/usr/bin/errlog"`
+```
